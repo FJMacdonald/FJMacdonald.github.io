@@ -48,6 +48,7 @@ By following these steps, you can create a free website that allows users to upl
  
      <!-- Create a div where the graph will take place -->
      <div>
+         <div id="chart_problems"></div>
          <div id="chart_title"></div>
          <div id="chart"></div>
      </div>
@@ -75,6 +76,11 @@ By following these steps, you can create a free website that allows users to upl
              // clear any previous chart
              var svg = d3.select("#chart")
              svg.selectAll('*').remove();
+             // clear previous problem data sets
+             let chartProblemDiv = document.getElementById("chart_problems");
+             chartProblemDiv.innerHTML = "";
+             chartProblemDiv.style.border = "none";
+ 
              //reset the data arrays
              athletesArray.length = 0
              leadersArray.length = 0
@@ -144,11 +150,11 @@ By following these steps, you can create a free website that allows users to upl
              var leadBike = 0;
              var leadT2 = 0;
              var leadRun = 0;
-             //  console.log("results length", results.length)
+             var problemTimes = 0;
+             var problemIndexArray = [];
              for (let i = 0; i < results.length; i++) {
-                 //       console.log("res", i, results[i]);
                  var name = results[i]["Athlete First Name"] + " " + results[i]["Athlete Last Name"];
-                 //   if (results[i].length > 0 ) {
+                 var finalTime = results[i][headers[headers.length - 1]].replace(/\r$/, '');
  
                  var swim = convertToSeconds(results[i]["Swim"]);
                  var t1 = convertToSeconds(results[i]["T1"]);
@@ -167,9 +173,14 @@ By following these steps, you can create a free website that allows users to upl
                  if (run != 0) {
                      run += t2;
                  }
- 
-                 //  Process the results to find the race leader at every stage
-                 //        console.log(name, swim, t1, bike, t2, run);
+                 var finalTimeInSeconds = convertToSeconds(finalTime);
+                 if (Math.abs(finalTimeInSeconds - run) > 5) {
+                     console.log("***********/nfinalTime: ", finalTimeInSeconds);
+                     console.log("run: ", run);
+                     console.log(name, results[i]["Status"]);
+                     problemIndexArray.push(i)
+                     problemTimes++;
+                 }
                  if (i == 0) {
                      leadSwim = swim;
                      leadT1 = t1;
@@ -220,8 +231,30 @@ By following these steps, you can create a free website that allows users to upl
  
                  //       console.log("leadersArray", leadersArray);
              }
+             console.log("problemTimes: ", problemTimes)
  
+             if (problemIndexArray.length > 0) {
+                 let chartTitleDiv = document.getElementById("chart_problems");
+                 var problemString = "There were issues with " + problemIndexArray.length + " athlete results:<ul>"
+                 var problems = 0;
+                 for (let i = 0; i < problemIndexArray.length; i++) {
+                     if (athletesArray[problemIndexArray[i]].status == "") {
+                         problemString += "<li>" + athletesArray[problemIndexArray[i]].athleteName + "</li>";
+                         athletesArray[problemIndexArray[i]].athleteName += "***";
+                         problems++;
+                     }
+                 }
+                 if (problems > 0) {
+ 
+                     problemString += "</ul>"
+                     // Update the inner HTML of the div with the new title
+                     chartTitleDiv.innerHTML = problemString;
+                     // Add a red border to the chartTitleDiv
+                     chartTitleDiv.style.border = "2px solid red";
+                 }
+             }
          }
+ 
  
          // Draws the chart
          function drawChart(athletesArray, leadersArray) {
@@ -653,7 +686,7 @@ By following these steps, you can create a free website that allows users to upl
                  // y position for country code
                  function labelPosY3(d, i) {
                      return (height + Math.floor(i / nColumns) * 30 + 50) + 0.6 * size;
-                 } 
+                 }
                  //add the frame for the rectangle (so it doesn't disapear when opacity = 0)
                  svg.append("g")
                      .selectAll("outerRect")
@@ -667,7 +700,7 @@ By following these steps, you can create a free website that allows users to upl
                      .style("stroke", "Black")
                      .style("stroke-width", lineStroke)
                      .attr("fill", "white");
-                // the color for the rect but also the interactivity
+                 // the color for the rect but also the interactivity
                  svg.selectAll("innerRect")
                      .data(resultsArray)
                      .join("rect")
@@ -681,7 +714,7 @@ By following these steps, you can create a free website that allows users to upl
                      .style('opacity', lineOpacity)
                      .attr("fill", function (d, i) { return colorPalette[i]; })
                      .on("click", function (d, i) {
-                        // get the current state from the opacity
+                         // get the current state from the opacity
                          var athleteRect = d3.select(this);
                          var opacity = athleteRect.style("opacity");
                          // cycle through 3 states - normal, highlighted and remove
@@ -700,16 +733,16 @@ By following these steps, you can create a free website that allows users to upl
                          }
                          // set the new state of the rect
                          athleteRect.style("opacity", lineOpacity);
-                         
+ 
                          // get the athlete index (with a mouse function(d, i) -  d is the mouse and i is the athlete)
                          const athleteIndex = d3.selectAll('.innerRect').nodes().indexOf(this);
-
+ 
                          // fiter for the corresponding athlete path & update it with new state
                          const athleteLine = svg.selectAll(".line").filter((d, i) => i === athleteIndex);
                          athleteLine.style("opacity", lineOpacity);
                          athleteLine.style("stroke-width", lineStroke);
  
-                        // fiter for the corresponding athlete label & update it with new state
+                         // fiter for the corresponding athlete label & update it with new state
                          const athletetext = svg.selectAll(".line-name").filter((d, i) => i === athleteIndex);
                          if (lineOpacity == 1.0) {
                              athletetext.style("visibility", "visible");
@@ -717,7 +750,7 @@ By following these steps, you can create a free website that allows users to upl
                              athletetext.style("visibility", "hidden");
                          }
  
-                        // fiter for the corresponding athlete path circles & update them with new state
+                         // fiter for the corresponding athlete path circles & update them with new state
                          const athleteCircles = svg.selectAll(".athlete-circle").filter(d => d.athleteIndex === athleteIndex);
                          athleteCircles.each(function (d) {
                              d3.select(this)
@@ -747,8 +780,8 @@ By following these steps, you can create a free website that allows users to upl
                      .text(function (d) { return d.athleteName.split(' ')[1] + " " + d.status; })
                      .attr("text-anchor", "left")
                      .style("font-size", "12px");
-                  //Add country code next to name
-                  svg.selectAll(".label-country")
+                 //Add country code next to name
+                 svg.selectAll(".label-country")
                      .data(resultsArray)
                      .join("text")
                      .attr("class", "label-country")
@@ -758,7 +791,7 @@ By following these steps, you can create a free website that allows users to upl
                      .text(function (d) { return d.country; })
                      .attr("text-anchor", "left")
                      .style("font-size", "12px");
-
+ 
                  //Draw path
                  svg.selectAll("path")
                      .data(resultsArray)
@@ -854,7 +887,7 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("width", width)
                      .attr("height", height);
  
-                // Define clipping path for line-labels
+                 // Define clipping path for line-labels
                  svg.append("defs").append("clipPath")
                      .attr("id", "clip-labels")
                      .append("rect")
@@ -869,7 +902,7 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("class", "x axis")
                      .call(xAxis);
  
-                // Add y-axis
+                 // Add y-axis
                  svg.append("g")
                      .attr("class", "y axis")
                      .call(yAxis)
@@ -880,13 +913,13 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("transform", "rotate(-90)")
                      .attr("fill", "#000")
                      .text("Time Behind Leader");
-
+ 
                  // Call the function to draw gridlines
                  drawVerticalGridlines(svg, 10);
                  drawVerticalGridlines(svg, 12);
                  drawVerticalGridlines(svg, 42);
                  drawVerticalGridlines(svg, 44);
-
+ 
                  // Function to draw vertical gridlines
                  function drawVerticalGridlines(selection, x) {
                      selection
@@ -902,7 +935,7 @@ By following these steps, you can create a free website that allows users to upl
                          .style("stroke-width", 0.5);
                  }
  
-
+ 
                  //function to annotate chrt 
                  function annotateChart(selection, x, y, text) {
                      selection
