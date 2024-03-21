@@ -35,16 +35,24 @@ By following these steps, you can create a free website that allows users to upl
  <head>
      <meta charset="UTF-8">
      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+     <link rel="stylesheet" href="test.css">
      <title>CSV File Upload</title>
  </head>
  
  <body>
+     <h4>Instructions:</h4> 
+     <ul>
+         <li>Get results file from https://triathlon.org/results</li> 
+         <li>Download the XLS file, open it and save it as a CSV file.</li> 
+         <li>Open the CSV file here.</li>
+     </ul>
+     </p>
      <!-- Initialize the ffile select button -->
-     <input type="file" id="csvFileInput" accept=".csv">
+     <input class="button" type="file" id="csvFileInput" accept=".csv">
      <div id="csvData"></div>
  
      <!-- Initialize the reset button -->
-     <button id="resetButton" style="margin-bottom: 10px">Reset</button>
+     <button class="button" id="resetButton" style="margin-bottom: 10px">Reset</button>
  
      <!-- Create a div where the graph will take place -->
      <div>
@@ -92,18 +100,16 @@ By following these steps, you can create a free website that allows users to upl
              let chartTitleDiv = document.getElementById("chart_title");
  
              // Update the inner HTML of the div with the new title
-             chartTitleDiv.innerHTML = title;
+             chartTitleDiv.innerHTML = "<h1>" + title + "</h1>";
  
              // Create a new FileReader object
              const reader = new FileReader();
              // Define the onload event handler for the FileReader
              reader.onload = function (e) {
-                 console.log("on load");
                  const csvData = e.target.result; // Get the CSV data
                  //   displayCSVData(csvData); // Call function to display CSV data
                  processData(csvData, athletesArray, leadersArray);
-                 console.log("leadersArray", leadersArray);
-                 console.log("athletesArray", athletesArray);
+ 
                  drawChart(athletesArray, leadersArray);
              };
  
@@ -128,7 +134,6 @@ By following these steps, you can create a free website that allows users to upl
  
          // Function to process csv data into arrays used by drawChart
          function processData(csvData, athletesArray, leadersArray) {
-             console.log("processData");
              const lines = csvData.split('\n');
              const headers = lines[0].split(',');
  
@@ -175,9 +180,6 @@ By following these steps, you can create a free website that allows users to upl
                  }
                  var finalTimeInSeconds = convertToSeconds(finalTime);
                  if (Math.abs(finalTimeInSeconds - run) > 5) {
-                     console.log("***********/nfinalTime: ", finalTimeInSeconds);
-                     console.log("run: ", run);
-                     console.log(name, results[i]["Status"]);
                      problemIndexArray.push(i)
                      problemTimes++;
                  }
@@ -222,16 +224,13 @@ By following these steps, you can create a free website that allows users to upl
                      status: results[i]["Status"],
                      country: results[i]["Country"],
                  });
-                 //        console.log(name + " pushed")
+ 
                  leadersArray[0] = leadSwim;
                  leadersArray[1] = leadT1;
                  leadersArray[2] = leadBike;
                  leadersArray[3] = leadT2;
                  leadersArray[4] = leadRun;
- 
-                 //       console.log("leadersArray", leadersArray);
              }
-             console.log("problemTimes: ", problemTimes)
  
              if (problemIndexArray.length > 0) {
                  let chartTitleDiv = document.getElementById("chart_problems");
@@ -250,7 +249,7 @@ By following these steps, you can create a free website that allows users to upl
                      // Update the inner HTML of the div with the new title
                      chartTitleDiv.innerHTML = problemString;
                      // Add a red border to the chartTitleDiv
-                     chartTitleDiv.style.border = "2px solid red";
+                     chartTitleDiv.style = "border: 1px solid red; border-radius: 5px;";
                  }
              }
          }
@@ -349,7 +348,6 @@ By following these steps, you can create a free website that allows users to upl
              // Function to reset the chart
              function resetChart() {
  
-                 console.log("reset chart");
                  // Reset the y-axis scale to its original domain
                  yScale.domain([-max_time_lag, 0]);
  
@@ -372,18 +370,14 @@ By following these steps, you can create a free website that allows users to upl
  
              resultsArray = [];
  
-             //   console.log("athletesArray length", athletesArray.length);
- 
              for (let i = 0; i < athletesArray.length; i++) {
-                 //               console.log("athletesArray[i]", i, athletesArray[i]);
                  const runDiff = athletesArray[i].run - leadersArray[4];
-                 //    console.log("runDiff", runDiff);
+ 
                  if (runDiff > max_time_lag) {
                      max_time_lag = runDiff;
                  }
                  //check for lapped out or dnf
                  if (athletesArray[i].status != "") {
-                     console.log(athletesArray[i])
                      if (athletesArray[i].swim < 1.0) {
                          athletesArray[i].swim = 0;
                      }
@@ -423,11 +417,10 @@ By following these steps, you can create a free website that allows users to upl
                      athleteName: athletesArray[i].athleteName,
                      position: athletesArray[i].position,
                      status: athletesArray[i].status,
-                     country: athletesArray[i].country,
+                     country: getCountryFlagEmoji(athletesArray[i].country),
                      values: values,
                  });
              }
-             //           console.log("**********************max time lag: ", max_time_lag);
  
              //This function takes an input time in seconds, calculates the minutes and remaining 
              //seconds, and formats them as "minutes:seconds". It also ensures that single-digit 
@@ -445,12 +438,12 @@ By following these steps, you can create a free website that allows users to upl
              //rectangles in the legend (athletes + teams)
              nRects = athletesArray.length
              const clientWidth = d3.select("#chart").node().getBoundingClientRect().width;
-             const nColumns = Math.trunc(clientWidth / 150);
+             const nColumns = Math.trunc(clientWidth / 200);
              const bottom = Math.ceil(nRects / nColumns) * size * 1.2 + 70;
  
  
              // set the dimensions and margins of the graph
-             var margin = { top: 40, right: 10, bottom: bottom, left: 50 },
+             var margin = { top: 40, right: 10, bottom: bottom, left: 70 },
                  width = clientWidth - margin.left - margin.right,
                  height = 500
              // append the svg object to the body of the page
@@ -493,16 +486,25 @@ By following these steps, you can create a free website that allows users to upl
              // Define the initial yAxis
              const yAxis = d3.axisLeft(yScale).ticks(0);
  
-             // Append the yAxis to the svg
+ 
+ 
+             // Add x-axis
+             var xAxis = d3.axisTop(xScale).ticks(0);
              svg.append("g")
-                 .attr("class", "y axis")
+                 .attr("class", "x axis")
+                 .call(xAxis);
+ 
+             // Add y-axis
+             svg.append("g")
+                 .attr("class", "y axis label")
                  .call(yAxis)
                  .append('text')
-                 .attr("y", -30)
+                 .attr("y", -45)
                  .attr("x", -10)
-                 .style("font-size", "13px")
                  .attr("transform", "rotate(-90)")
-                 .attr("fill", "#000");
+                 .attr("fill", "#000")
+                 .attr("font-size", "16")
+                 .text("Time Behind Leader");
  
  
  
@@ -602,7 +604,8 @@ By following these steps, you can create a free website that allows users to upl
                      // Otherwise, show ticks every 2 minutes
                      numberOfTicks = yRangeDiff / 120;
                  }
-                 svg.select(".y.axis text").remove();
+ 
+ 
                  // Define the y-axis with the calculated number of ticks and custom tick format
                  const yAxis = d3.axisLeft(yScale).ticks(numberOfTicks).tickFormat(d => {
                      if (d < -90) {
@@ -614,12 +617,15 @@ By following these steps, you can create a free website that allows users to upl
                      }
                  });
  
- 
                  // Update the y-axis
-                 svg.select(".y.axis").call(yAxis);
-                 // Add y-axis gridlines
-                 svg.selectAll(".y-gridline").remove(); // Remove existing gridlines
+                 yAxisGroup = svg.select(".y.axis").call(yAxis);
+                 
+                 // Modify the font style for the tick labels
+                 yAxisGroup.selectAll(".tick text")
+                     .attr("class", "label");
  
+ 
+                 // // Add y-axis gridlines
                  svg.selectAll(".y-gridline")
                      .data(yScale.ticks(numberOfTicks))
                      .enter()
@@ -648,11 +654,6 @@ By following these steps, you can create a free website that allows users to upl
              function updateChart(max_time_lag) {
  
  
-                 // // Create a group for all athletes
-                 // const athleteGroup = svg.append("g")
-                 //     .attr("class", "athlete-group");
- 
- 
                  var lineOpacity = "0.5";
                  var lineStroke = "1.0";
  
@@ -662,18 +663,18 @@ By following these steps, you can create a free website that allows users to upl
  
                  //  x position for rect
                  function rectPosX(d, i) {
-                     return (i % nColumns) * (clientWidth / nColumns) - 20;
+                     return (i % nColumns) * (clientWidth / nColumns) - 50;
                  }
                  function rectPosY(d, i) {
                      return (height + Math.floor(i / nColumns) * 30 + 50);
                  }
                  //  x position for names
                  function labelPosX(d, i) {
-                     return ((i % nColumns) * (clientWidth / nColumns) - 20) + 1.2 * size;
+                     return ((i % nColumns) * (clientWidth / nColumns) - 50) + 1.2 * size;
                  }
                  //  x position for country code
                  function labelPosX2(d, i) {
-                     return ((i % nColumns) * (clientWidth / nColumns) - 20) + 1.2 * size + 60;
+                     return ((i % nColumns) * (clientWidth / nColumns) - 50) + 1.2 * size + 120;
                  }
                  // y position for first name
                  function labelPosY(d, i) {
@@ -762,35 +763,33 @@ By following these steps, you can create a free website that allows users to upl
                  svg.selectAll(".label-firstname")
                      .data(resultsArray)
                      .join("text")
-                     .attr("class", "label-firstname")
+                     .attr("class", "label")
                      .attr("x", labelPosX)
                      .attr("y", labelPosY)
                      .attr("fill", function (d, i) { return colorPalette[i]; })
-                     .text(function (d) { return d.athleteName.split(' ')[0]; })
-                     .attr("text-anchor", "left")
-                     .style("font-size", "12px");
+                     .text(function (d) { return d.athleteName.split(' ')[0]; });
+                   
                  //Add last name next to rect
                  svg.selectAll(".label-lastname")
                      .data(resultsArray)
                      .join("text")
-                     .attr("class", "label-lastname")
+                     .attr("class", "label")
                      .attr("x", labelPosX)
                      .attr("y", labelPosY2)
                      .attr("fill", function (d, i) { return colorPalette[i]; })
-                     .text(function (d) { return d.athleteName.split(' ')[1] + " " + d.status; })
-                     .attr("text-anchor", "left")
-                     .style("font-size", "12px");
+                     .text(function (d) { return d.athleteName.split(' ')[1] + " " + d.status; });
+                  
                  //Add country code next to name
                  svg.selectAll(".label-country")
                      .data(resultsArray)
                      .join("text")
-                     .attr("class", "label-country")
+                     .attr("class", "label")
                      .attr("x", labelPosX2)
                      .attr("y", labelPosY3)
                      .attr("fill", function (d, i) { return colorPalette[i]; })
                      .text(function (d) { return d.country; })
-                     .attr("text-anchor", "left")
-                     .style("font-size", "12px");
+                     .attr("font-size", 25);
+             
  
                  //Draw path
                  svg.selectAll("path")
@@ -810,20 +809,19 @@ By following these steps, you can create a free website that allows users to upl
                      .style('opacity', lineOpacity)
                      .attr("clip-path", "url(#clip)")
                      .on("mouseover", function (d, i) {
+                         //remove any previous athlete name
+                         svg.select(".line-text").remove();
+                         // get the current mouse position 
                          const [mouseX, mouseY] = d3.pointer(event, this);
                          // Get the index of the current path
-                         const index = d3.selectAll(".path").nodes().indexOf(this);
+                         const index = resultsArray.indexOf(i); 
+                       
                          svg.append("text")
-                             .attr("class", "line-text")
+                             .attr("class", "line-text label")
                              .style("fill", colorPalette[index])
                              .text(i.athleteName)
-                             .attr("text-anchor", "left")
                              .attr("x", mouseX)
-                             .attr("y", mouseY)
-                             .style("font-size", "12px")
-                     })
-                     .on("mouseout", function (d) {
-                         svg.select(".line-text").remove();
+                             .attr("y", mouseY);
                      });
                  //Draw circles at path coordinates
                  svg.selectAll("circle")
@@ -842,14 +840,13 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("cy", d => yScale(d.coordinate.y))
                      .attr("clip-path", "url(#clip)")
                      .on("click", function (d, i) {
-                         console.log(d, i);
                          d3.select(this)
                              .transition()
                              .duration(duration)
                              .attr("r", circleRadiusHover)
                              .style("cursor", "pointer");
                          svg.append("text")
-                             .attr("class", "text")
+                             .attr("class", "text label")
                              .text(i.coordinate.diff) // Accessing the diff property from the nested data
                              .attr("x", xScale(i.coordinate.x) + 5) // Accessing the x property from the nested data
                              .attr("y", yScale(i.coordinate.y) - 10); // Accessing the y property from the nested data
@@ -863,21 +860,20 @@ By following these steps, you can create a free website that allows users to upl
                          svg
                              .selectAll(".text").remove();
                      });
-                 //Label paths with athlete ffirst names
+                 //Label paths with athlete first names
                  svg.selectAll("text.line-name")
                      .data(resultsArray)
                      .enter()
                      .append("text")
-                     .attr("class", "line-name")
+                     .attr("class", "line-name label")
                      .style("fill", (d, i) => colorPalette[i]) // Color based on athlete index
                      .text(d => d.athleteName.split(' ')[0]) // Display athlete's name
                      .attr("text-anchor", "end") // Anchor text to the end of the path
-                     .attr("x", d => xScale(d.values[d.values.length - 1].x + 0.5)) // X position based on the last x-coordinate
+                     .attr("x", width-100) // 
                      .attr("y", d => yScale(d.values[d.values.length - 1].y)) // Y position based on the last y-coordinate
                      .attr("clip-path", "url(#clip-labels)")
-                     .style("font-size", "12px")
                      .style("visibility", "hidden")
-                     .attr("text-anchor", "left");
+                     .attr("text-anchor", "left"); // for some reason still need to define this
  
  
                  // Define clipping path for lines
@@ -892,27 +888,11 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("id", "clip-labels")
                      .append("rect")
                      .attr("width", width)
-                     .attr("height", height)
+                     .attr("height", height+20)
                      .attr("y", -10);
  
  
-                 // Add x-axis
-                 var xAxis = d3.axisTop(xScale).ticks(0);
-                 svg.append("g")
-                     .attr("class", "x axis")
-                     .call(xAxis);
  
-                 // Add y-axis
-                 svg.append("g")
-                     .attr("class", "y axis")
-                     .call(yAxis)
-                     .append('text')
-                     .attr("y", -36)
-                     .attr("x", -10)
-                     .style("font-size", "14px")
-                     .attr("transform", "rotate(-90)")
-                     .attr("fill", "#000")
-                     .text("Time Behind Leader");
  
                  // Call the function to draw gridlines
                  drawVerticalGridlines(svg, 10);
@@ -940,21 +920,70 @@ By following these steps, you can create a free website that allows users to upl
                  function annotateChart(selection, x, y, text) {
                      selection
                          .append('text')
+                         .attr("class", "label")
                          .attr('x', xScale(x))
                          .attr('y', y)
-                         .text(text)
-                         .style('font-size', '14px')
-                         .style('fill', 'black'); // Customize the text styling as needed
+                         .text(text);
                  }
  
                  // annotate with swim, t1, bike, t2, run
-                 annotateChart(svg, 1, -10, 'Swim');
-                 annotateChart(svg, 10, -10, 'T1');
+                 annotateChart(svg, 4, -10, 'Swim');
+                 annotateChart(svg, 10.5, -10, 'T1');
                  annotateChart(svg, 24, -10, 'Bike');
-                 annotateChart(svg, 42, -10, 'T2');
+                 annotateChart(svg, 42.5, -10, 'T2');
                  annotateChart(svg, 52, -10, 'Run');
  
              }
+         }
+ 
+         function getCountryFlagEmoji(countryCode) {
+             const flagMappings = {
+                 'AFG': '🇦🇫', 'ALA': '🇦🇽', 'ALB': '🇦🇱', 'DZA': '🇩🇿', 'ASM': '🇦🇸',
+                 'AND': '🇦🇩', 'AGO': '🇦🇴', 'AIA': '🇦🇮', 'ATA': '🇦🇶', 'ATG': '🇦🇬',
+                 'ARG': '🇦🇷', 'ARM': '🇦🇲', 'ABW': '🇦🇼', 'AUS': '🇦🇺', 'AUT': '🇦🇹',
+                 'AZE': '🇦🇿', 'BHS': '🇧🇸', 'BHR': '🇧🇭', 'BGD': '🇧🇩', 'BRB': '🇧🇧',
+                 'BLR': '🇧🇾', 'BEL': '🇧🇪', 'BLZ': '🇧🇿', 'BEN': '🇧🇯', 'BMU': '🇧🇲',
+                 'BTN': '🇧🇹', 'BOL': '🇧🇴', 'BIH': '🇧🇦', 'BWA': '🇧🇼', 'BVT': '🇧🇻',
+                 'BRA': '🇧🇷', 'IOT': '🇮🇴', 'BRN': '🇧🇳', 'BGR': '🇧🇬', 'BFA': '🇧🇫',
+                 'BDI': '🇧🇮', 'KHM': '🇰🇭', 'CMR': '🇨🇲', 'CAN': '🇨🇦', 'CPV': '🇨🇻',
+                 'CYM': '🇰🇾', 'CAF': '🇨🇫', 'TCD': '🇹🇩', 'CHL': '🇨🇱', 'CHN': '🇨🇳',
+                 'CXR': '🇨🇽', 'CCK': '🇨🇨', 'COL': '🇨🇴', 'COM': '🇰🇲', 'COG': '🇨🇬',
+                 'COD': '🇨🇩', 'COK': '🇨🇰', 'CRI': '🇨🇷', 'CIV': '🇨🇮', 'HRV': '🇭🇷',
+                 'CUB': '🇨🇺', 'CYP': '🇨🇾', 'CZE': '🇨🇿', 'DNK': '🇩🇰', 'DJI': '🇩🇯',
+                 'DMA': '🇩🇲', 'DOM': '🇩🇴', 'ECU': '🇪🇨', 'EGY': '🇪🇬', 'SLV': '🇸🇻',
+                 'GNQ': '🇬🇶', 'ERI': '🇪🇷', 'EST': '🇪🇪', 'ETH': '🇪🇹', 'FLK': '🇫🇰',
+                 'FRO': '🇫🇴', 'FJI': '🇫🇯', 'FIN': '🇫🇮', 'FRA': '🇫🇷', 'GUF': '🇬🇫',
+                 'PYF': '🇵🇫', 'ATF': '🇹🇫', 'GAB': '🇬🇦', 'GMB': '🇬🇲', 'GEO': '🇬🇪',
+                 'DEU': '🇩🇪', 'GHA': '🇬🇭', 'GIB': '🇬🇮', 'GRC': '🇬🇷', 'GRL': '🇬🇱',
+                 'GRD': '🇬🇩', 'GLP': '🇬🇵', 'GUM': '🇬🇺', 'GTM': '🇬🇹', 'GGY': '🇬🇬',
+                 'GIN': '🇬🇳', 'GNB': '🇬🇼', 'GUY': '🇬🇾', 'HTI': '🇭🇹', 'HMD': '🇭🇲',
+                 'VAT': '🇻🇦', 'HND': '🇭🇳', 'HKG': '🇭🇰', 'HUN': '🇭🇺', 'ISL': '🇮🇸',
+                 'IND': '🇮🇳', 'IDN': '🇮🇩', 'IRN': '🇮🇷', 'IRQ': '🇮🇶', 'IRL': '🇮🇪',
+                 'IMN': '🇮🇲', 'ISR': '🇮🇱', 'ITA': '🇮🇹', 'JAM': '🇯🇲', 'JPN': '🇯🇵',
+                 'JEY': '🇯🇪', 'JOR': '🇯🇴', 'KAZ': '🇰🇿', 'TRI': '🇹🇹', 'POR': '🇵🇹',
+                 'KEN': '🇰🇪', 'KIR': '🇰🇮', 'PRK': '🇰🇵', 'KOR': '🇰🇷', 'KWT': '🇰🇼',
+                 'KGZ': '🇰🇬', 'LAO': '🇱🇦', 'LVA': '🇱🇻', 'LBN': '🇱🇧', 'LSO': '🇱🇸',
+                 'LBR': '🇱🇷', 'LBY': '🇱🇾', 'LIE': '🇱🇮', 'LTU': '🇱🇹', 'LUX': '🇱🇺',
+                 'MAC': '🇲🇴', 'MKD': '🇲🇰', 'MDG': '🇲🇬', 'MWI': '🇲🇼', 'MYS': '🇲🇾',
+                 'MDV': '🇲🇻', 'MLI': '🇲🇱', 'MLT': '🇲🇹', 'MHL': '🇲🇭', 'MTQ': '🇲🇶',
+                 'MRT': '🇲🇷', 'MUS': '🇲🇺', 'MYT': '🇾🇹', 'MEX': '🇲🇽', 'FSM': '🇫🇲',
+                 'MDA': '🇲🇩', 'MCO': '🇲🇨', 'MNG': '🇲🇳', 'MNE': '🇲🇪', 'MSR': '🇲🇸',
+                 'MAR': '🇲🇦', 'MOZ': '🇲🇿', 'MMR': '🇲🇲', 'NAM': '🇳🇦', 'NRU': '🇳🇷',
+                 'NPL': '🇳🇵', 'NLD': '🇳🇱', 'NCL': '🇳🇨', 'NZL': '🇳🇿', 'NIC': '🇳🇮',
+                 'NER': '🇳🇪', 'NGA': '🇳🇬', 'NIU': '🇳🇺', 'NFK': '🇳🇫', 'MNP': '🇲🇵',
+                 'NOR': '🇳🇴', 'OMN': '🇴🇲', 'PAK': '🇵🇰', 'PLW': '🇵🇼', 'PSE': '🇵🇸',
+                 'PAN': '🇵🇦', 'PNG': '🇵🇬', 'PRY': '🇵🇾', 'PER': '🇵🇪', 'PHL': '🇵🇭',
+                 'PCN': '🇵🇳', 'POL': '🇵🇱', 'PRT': '🇵🇹', 'PRI': '🇵🇷', 'QAT': '🇶🇦',
+                 'REU': '🇷🇪', 'ROU': '🇷🇴', 'RUS': '🇷🇺', 'RWA': '🇷🇼', 'BLM': '🇧🇱',
+                 'SHN': '🇸🇭', 'KNA': '🇰🇳', 'LCA': '🇱🇨', 'MAF': '🇲🇫', 'SPM': '🇵🇲',
+                 'VCT': '🇻🇨', 'WSM': '🇼🇸', 'SMR': '🇸🇲', 'STP': '🇸🇹', 'SAU': '🇸🇦',
+                 'SEN': '🇸🇳', 'SRB': '🇷🇸', 'SYC': '🇸🇨', 'SLE': '🇸🇱', 'SGP': '🇸🇬',
+                 'SXM': '🇸🇽', 'SVK': '🇸🇰', 'SVN': '🇸🇮', 'SLB': '🇸🇧', 'SOM': '🇸🇴',
+                 'ZAF': '🇿🇦', 'USA': '🇺🇸', 'GER': '🇩🇪', 'ESP': '🇪🇸', 'NED': '🇳🇱', 
+                 'DEN': '🇩🇰', 'GBR': '🇬🇧', 'RSA': '🇿🇦', 'SUI': '🇨🇭', 'CHI': '🇨🇱', 
+                 'BER': '🇧🇲', 'ZIM': '🇿🇼', 'VEN': '🇻🇪', 'CRC': '🇨🇷',
+             }
+             return flagMappings[countryCode] || countryCode;
          }
      </script>
  </body>
