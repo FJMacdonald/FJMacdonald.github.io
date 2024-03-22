@@ -40,10 +40,10 @@ By following these steps, you can create a free website that allows users to upl
  </head>
  
  <body>
-     <h4>Instructions:</h4> 
+     <h4>Instructions:</h4>
      <ul>
-         <li>Get results file from https://triathlon.org/results</li> 
-         <li>Download the XLS file, open it and save it as a CSV file.</li> 
+         <li>Get results file from https://triathlon.org/results</li>
+         <li>Download the XLS file, open it and save it as a CSV file.</li>
          <li>Open the CSV file here.</li>
      </ul>
      </p>
@@ -58,7 +58,9 @@ By following these steps, you can create a free website that allows users to upl
      <div>
          <div id="chart_problems"></div>
          <div id="chart_title"></div>
-         <div id="chart"></div>
+         <div id="development_chart"></div>
+         <h2>Spider Chart</h2>
+         <div id="spider_chart" style="width: 100%;"></div>
      </div>
  
      <script src="https://d3js.org/d3-color.v1.min.js"> </script>
@@ -68,6 +70,9 @@ By following these steps, you can create a free website that allows users to upl
      <script>
          const athletesArray = [];
          const leadersArray = [];
+         const spiderChartArray = [];
+         var athleteIndexArray = [];
+ 
          var max_time_lag = 0;
          var title = "";
  
@@ -82,7 +87,7 @@ By following these steps, you can create a free website that allows users to upl
          // Function to handle file upload
          function handleFileUpload(event) {
              // clear any previous chart
-             var svg = d3.select("#chart")
+             var svg = d3.select("#development_chart")
              svg.selectAll('*').remove();
              // clear previous problem data sets
              let chartProblemDiv = document.getElementById("chart_problems");
@@ -157,61 +162,102 @@ By following these steps, you can create a free website that allows users to upl
              var leadRun = 0;
              var problemTimes = 0;
              var problemIndexArray = [];
+             const swim1 = convertToSeconds(results[0]["Swim"]);
+             const t11 = convertToSeconds(results[0]["T1"]);
+             const bike1 = convertToSeconds(results[0]["Bike"]);
+             const t21 = convertToSeconds(results[0]["T2"]);
+             const run1 = convertToSeconds(results[0]["Run"]);
+             var fastestSplit = [swim1, t11, bike1, t21, run1];
+             var slowestSplit = [swim1, t11, bike1, t21, run1];
+             var timePerDisipline = [];
              for (let i = 0; i < results.length; i++) {
                  var name = results[i]["Athlete First Name"] + " " + results[i]["Athlete Last Name"];
                  var finalTime = results[i][headers[headers.length - 1]].replace(/\r$/, '');
  
                  var swim = convertToSeconds(results[i]["Swim"]);
+                 if (swim != 0) {
+                     if (swim < fastestSplit[0]) {
+                         fastestSplit[0] = swim;
+                     } else if (swim > slowestSplit[0]) {
+                         slowestSplit[0] = swim;
+                     }
+                 }
                  var t1 = convertToSeconds(results[i]["T1"]);
+                 const t1_abs = t1;
                  if (t1 != 0) {
                      t1 += swim;
+                     if (t1_abs < fastestSplit[1]) {
+                         fastestSplit[1] = t1_abs;
+                     } else if (t1_abs > slowestSplit[1]) {
+                         slowestSplit[1] = t1_abs;
+                     }
                  }
                  var bike = convertToSeconds(results[i]["Bike"]);
+                 const bike_abs = bike;
                  if (bike != 0) {
                      bike += t1;
+                     if (bike_abs < fastestSplit[2]) {
+                         fastestSplit[2] = bike_abs;
+                     } else if (bike_abs > slowestSplit[2]) {
+                         slowestSplit[2] = bike_abs;
+                     }
                  }
                  var t2 = convertToSeconds(results[i]["T2"]);
+                 const t2_abs = t2;
                  if (t2 != 0) {
                      t2 += bike;
+                     if (t2_abs < fastestSplit[3]) {
+                         fastestSplit[3] = t2_abs;
+                     } else if (t2_abs > slowestSplit[3]) {
+                         slowestSplit[3] = t2_abs;
+                     }
                  }
                  var run = convertToSeconds(results[i]["Run"]);
+                 const run_abs = run;
                  if (run != 0) {
                      run += t2;
+                     if (run_abs < fastestSplit[4]) {
+                         fastestSplit[4] = run_abs;
+                     } else if (run_abs > slowestSplit[4]) {
+                         slowestSplit[4] = run_abs;
+                     }
                  }
                  var finalTimeInSeconds = convertToSeconds(finalTime);
                  if (Math.abs(finalTimeInSeconds - run) > 5) {
                      problemIndexArray.push(i)
                      problemTimes++;
                  }
+                 timePerDisipline = [swim, t1_abs, bike_abs, t2_abs, run_abs];
                  if (i == 0) {
                      leadSwim = swim;
                      leadT1 = t1;
                      leadBike = bike;
                      leadT2 = t2;
                      leadRun = run;
-                     console.log(swim, t1, bike, t2, run);
-                     console.log("lead swimmer: " + name);
+                  //   console.log(swim, t1, bike, t2, run);
+                 //    console.log("lead swimmer: " + name);
                  } else {
                      if (swim != 0 && swim < leadSwim) {
                          leadSwim = swim;
-                         console.log("lead swimmer: " + name);
+                        // console.log("lead swimmer: " + name);
                      }
                      if (t1 != 0 && t1 < leadT1) {
                          leadT1 = t1;
-                         console.log("lead t1: " + name);
+                       //  console.log("lead t1: " + name);
                      }
                      if (bike != 0 && bike < leadBike) {
                          leadBike = bike;
-                         console.log("lead biker: " + name);
+                        // console.log("lead biker: " + name);
                      }
                      if (t2 != 0 && t2 < leadT2) {
                          leadT2 = t2;
-                         console.log("lead t2: " + name);
+                     //    console.log("lead t2: " + name);
                      }
                      if (run != 0 && run < leadRun) {
                          leadRun = run;
-                         console.log("lead runner: " + name);
+                     //    console.log("lead runner: " + name);
                      }
+                     
                  }
                  athletesArray.push({
                      athleteName: name,
@@ -220,6 +266,7 @@ By following these steps, you can create a free website that allows users to upl
                      bike: bike,
                      t2: t2,
                      run: run,
+                     timePerDisipline: timePerDisipline,
                      position: results[i]["Position"],
                      status: results[i]["Status"],
                      country: results[i]["Country"],
@@ -231,6 +278,7 @@ By following these steps, you can create a free website that allows users to upl
                  leadersArray[3] = leadT2;
                  leadersArray[4] = leadRun;
              }
+             normalizeResults(athletesArray, fastestSplit, slowestSplit)
  
              if (problemIndexArray.length > 0) {
                  let chartTitleDiv = document.getElementById("chart_problems");
@@ -437,7 +485,7 @@ By following these steps, you can create a free website that allows users to upl
  
              //rectangles in the legend (athletes + teams)
              nRects = athletesArray.length
-             const clientWidth = d3.select("#chart").node().getBoundingClientRect().width;
+             const clientWidth = d3.select("#development_chart").node().getBoundingClientRect().width;
              const nColumns = Math.trunc(clientWidth / 200);
              const bottom = Math.ceil(nRects / nColumns) * size * 1.2 + 70;
  
@@ -447,7 +495,7 @@ By following these steps, you can create a free website that allows users to upl
                  width = clientWidth - margin.left - margin.right,
                  height = 500
              // append the svg object to the body of the page
-             svg = d3.select("#chart")
+             svg = d3.select("#development_chart")
                  .append("svg")
                  .attr("width", width + margin.left + margin.right)
                  .attr("height", height + margin.top + margin.bottom)
@@ -571,12 +619,9 @@ By following these steps, you can create a free website that allows users to upl
                      });
  
                  // Update labels
-                 //  svg.selectAll(".line-name").remove();
                  svg.selectAll(".line-name")
-                     //.attr("y", d => yScale(d.y));
-                     .attr("x", d => xScale(d.values[d.values.length - 1].x + 0.5)) // X position based on the last x-coordinate
-                     .attr("y", d => yScale(d.values[d.values.length - 1].y)) // Y position based on the last y-coordinate
- 
+                     .attr("x", width - 100)
+                     .attr("y", d => yScale(d.values[d.values.length - 1].y))
              }
  
              // Function to update the y-axis based on the current yScale
@@ -619,7 +664,7 @@ By following these steps, you can create a free website that allows users to upl
  
                  // Update the y-axis
                  yAxisGroup = svg.select(".y.axis").call(yAxis);
-                 
+ 
                  // Modify the font style for the tick labels
                  yAxisGroup.selectAll(".tick text")
                      .attr("class", "label");
@@ -747,8 +792,14 @@ By following these steps, you can create a free website that allows users to upl
                          const athletetext = svg.selectAll(".line-name").filter((d, i) => i === athleteIndex);
                          if (lineOpacity == 1.0) {
                              athletetext.style("visibility", "visible");
+                             athleteIndexArray.push(athleteIndex);
                          } else {
                              athletetext.style("visibility", "hidden");
+                             //remove athlete from spider chart
+                             let index = athleteIndexArray.indexOf(athleteIndex);
+                             if (index !== -1) {
+                                 athleteIndexArray.splice(index, 1);
+                             }
                          }
  
                          // fiter for the corresponding athlete path circles & update them with new state
@@ -758,6 +809,8 @@ By following these steps, you can create a free website that allows users to upl
                                  .style("opacity", lineOpacity)
                                  .attr("r", circleRadius);
                          });
+ 
+                         drawSpiderChart(athleteIndexArray) ;
                      });
                  //Add athlete first name next to rect
                  svg.selectAll(".label-firstname")
@@ -768,7 +821,7 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("y", labelPosY)
                      .attr("fill", function (d, i) { return colorPalette[i]; })
                      .text(function (d) { return d.athleteName.split(' ')[0]; });
-                   
+ 
                  //Add last name next to rect
                  svg.selectAll(".label-lastname")
                      .data(resultsArray)
@@ -778,7 +831,7 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("y", labelPosY2)
                      .attr("fill", function (d, i) { return colorPalette[i]; })
                      .text(function (d) { return d.athleteName.split(' ')[1] + " " + d.status; });
-                  
+ 
                  //Add country code next to name
                  svg.selectAll(".label-country")
                      .data(resultsArray)
@@ -789,7 +842,7 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("fill", function (d, i) { return colorPalette[i]; })
                      .text(function (d) { return d.country; })
                      .attr("font-size", 25);
-             
+ 
  
                  //Draw path
                  svg.selectAll("path")
@@ -814,8 +867,8 @@ By following these steps, you can create a free website that allows users to upl
                          // get the current mouse position 
                          const [mouseX, mouseY] = d3.pointer(event, this);
                          // Get the index of the current path
-                         const index = resultsArray.indexOf(i); 
-                       
+                         const index = resultsArray.indexOf(i);
+ 
                          svg.append("text")
                              .attr("class", "line-text label")
                              .style("fill", colorPalette[index])
@@ -869,7 +922,7 @@ By following these steps, you can create a free website that allows users to upl
                      .style("fill", (d, i) => colorPalette[i]) // Color based on athlete index
                      .text(d => d.athleteName.split(' ')[0]) // Display athlete's name
                      .attr("text-anchor", "end") // Anchor text to the end of the path
-                     .attr("x", width-100) // 
+                     .attr("x", width - 100)
                      .attr("y", d => yScale(d.values[d.values.length - 1].y)) // Y position based on the last y-coordinate
                      .attr("clip-path", "url(#clip-labels)")
                      .style("visibility", "hidden")
@@ -888,7 +941,7 @@ By following these steps, you can create a free website that allows users to upl
                      .attr("id", "clip-labels")
                      .append("rect")
                      .attr("width", width)
-                     .attr("height", height+20)
+                     .attr("height", height + 20)
                      .attr("y", -10);
  
  
@@ -979,12 +1032,304 @@ By following these steps, you can create a free website that allows users to upl
                  'VCT': '🇻🇨', 'WSM': '🇼🇸', 'SMR': '🇸🇲', 'STP': '🇸🇹', 'SAU': '🇸🇦',
                  'SEN': '🇸🇳', 'SRB': '🇷🇸', 'SYC': '🇸🇨', 'SLE': '🇸🇱', 'SGP': '🇸🇬',
                  'SXM': '🇸🇽', 'SVK': '🇸🇰', 'SVN': '🇸🇮', 'SLB': '🇸🇧', 'SOM': '🇸🇴',
-                 'ZAF': '🇿🇦', 'USA': '🇺🇸', 'GER': '🇩🇪', 'ESP': '🇪🇸', 'NED': '🇳🇱', 
-                 'DEN': '🇩🇰', 'GBR': '🇬🇧', 'RSA': '🇿🇦', 'SUI': '🇨🇭', 'CHI': '🇨🇱', 
+                 'ZAF': '🇿🇦', 'USA': '🇺🇸', 'GER': '🇩🇪', 'ESP': '🇪🇸', 'NED': '🇳🇱',
+                 'DEN': '🇩🇰', 'GBR': '🇬🇧', 'RSA': '🇿🇦', 'SUI': '🇨🇭', 'CHI': '🇨🇱',
                  'BER': '🇧🇲', 'ZIM': '🇿🇼', 'VEN': '🇻🇪', 'CRC': '🇨🇷',
              }
              return flagMappings[countryCode] || countryCode;
          }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+    
+         function normalizeResults(athletesArray, fastestSplits, slowestSplits) {
+             for (let i = 0; i < athletesArray.length; i++) {
+                 const normalizedSwim = 1 - (athletesArray[i].timePerDisipline[0] - fastestSplits[0]) / (slowestSplits[0] - fastestSplits[0]);
+                 const normalizedT1 = 1 - (athletesArray[i].timePerDisipline[1] - fastestSplits[1]) / (slowestSplits[1] - fastestSplits[1]);
+                 const normalizedBike = 1 - (athletesArray[i].timePerDisipline[2] - fastestSplits[2]) / (slowestSplits[2] - fastestSplits[2]);
+                 const normalizedT2 = 1 - (athletesArray[i].timePerDisipline[3] - fastestSplits[3]) / (slowestSplits[3] - fastestSplits[3]);
+                 const normalizedRun = 1 - (athletesArray[i].timePerDisipline[4] - fastestSplits[4]) / (slowestSplits[4] - fastestSplits[4]);
+                 spiderChartArray.push({
+                     athleteName: athletesArray[i].athleteName,
+                     values: {
+                         'Swim': normalizedSwim,
+                         'T1': normalizedT1,
+                         'Bike': normalizedBike,
+                         'T2': normalizedBike,
+                         'Run': normalizedRun
+                     },
+                     position: athletesArray[i].position,
+                     status: athletesArray[i].status,
+                 });
+             }
+         }
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+         function drawSpiderChart(selectedAthletes) {
+             
+             var selectedAthletes = [];
+             for (let i = 0; i < athleteIndexArray.length; i++) {
+                 selectedAthletes.push(spiderChartArray[athleteIndexArray[i]]);
+             }
+ 
+             // set the dimensions and margins of the graph
+             var margin = { top: 10, right: 10, bottom: 0, left: 10 };
+             var width = d3.select("#spider_chart").node().getBoundingClientRect().width - margin.left - margin.right;
+             var height = 400 - margin.top - margin.bottom;
+             if (width < 500)
+                 margin.bottom = 50;
+             // append the svg object to the body of the page
+             d3.select("#spider_chart").selectAll('*').remove();
+             var spider_svg = d3.select("#spider_chart")
+                 .append("svg")
+                 .attr("width", width + margin.left + margin.right)
+                 .attr("height", height + margin.top + margin.bottom)
+                 .append("g")
+                 .attr("transform",
+                     "translate(" + margin.left + "," + margin.top + ")");
+ 
+             // Create a rectangle for the frame
+             var frame = spider_svg.append("rect")
+                 .attr("x", 0)
+                 .attr("y", 0)
+                 .attr("width", width)
+                 .attr("height", height + margin.bottom)
+                 .attr("rx", 10)
+                 .attr("ry", 10)
+                 .attr("stroke", "gray")
+                 .attr("opacity", 0.6)
+                 .attr("stroke-width", 2)
+                 .attr("fill", "transparent");
+ 
+             //     updateChart(selectedAthletes);
+             // function updateChart(selection) {
+                 //clear previous graph
+                 d3.select('spider_svg').selectAll('.athlete-group').remove();
+                 // Create a group for all athletes
+                 const athleteGroup = spider_svg.append("g")
+                     .attr("class", "athlete-group");
+ 
+ 
+ 
+                 var lineOpacity = "0.3";
+ 
+ 
+                 // Define the size and spacing of the rectangles
+                 const size = 25;
+                 const rectSpacing = 5;
+ 
+ 
+                 let features = ["Swim", "T1", "Bike", "T2", "Run"];
+ 
+ 
+                 var color = d3.scaleOrdinal()
+                     .domain(selectedAthletes)
+                     .range(d3.schemeSet2);
+ 
+                 let radialScale = d3.scaleLinear()
+                     .domain([0, 1])
+                     .range([0, 140]); // this dictates the size/scale of the spider chart
+                 let ticks = [0.2, 0.4, 0.6, 0.8, 1];
+ 
+ 
+                 athleteGroup.selectAll("circle")
+                     .data(ticks)
+                     .join(
+                         enter => enter.append("circle")
+                             .attr("cx", width / 2)
+                             .attr("cy", height / 2)
+                             .attr("fill", "none")
+                             .attr("stroke", "gray")
+                             .attr("r", d => radialScale(d))
+                     );
+                 athleteGroup.selectAll(".ticklabel")
+                     .data(ticks)
+                     .join(
+                         enter => enter.append("text")
+                             .attr("class", "label ticklabel")
+                             .attr("x", width / 2 + 5)
+                             .attr("y", d => height / 2 - radialScale(d))
+                             .text(d => d.toString())
+                            // .style("font-size", "12px")
+                     );
+ 
+                 function angleToCoordinate(angle, value) {
+                     let x = Math.cos(angle) * radialScale(value);
+                     let y = Math.sin(angle) * radialScale(value);
+                     return { "x": width / 2 + x, "y": height / 2 - y };
+                 }
+ 
+                 let featureData = features.map((f, i) => {
+                     let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
+                     return {
+                         "name": f,
+                         "angle": angle,
+                         "line_coord": angleToCoordinate(angle, 1.02),
+                         "label_coord": angleToCoordinate(angle, 1.15)
+                     };
+                 });
+                 // draw axis line
+                 athleteGroup.selectAll("line")
+                     .data(featureData)
+                     .join(
+                         enter => enter.append("line")
+                             .attr("x1", width / 2)
+                             .attr("y1", height / 2)
+                             .attr("x2", d => d.line_coord.x)
+                             .attr("y2", d => d.line_coord.y)
+                             .attr("stroke", "black")
+                     );
+ 
+                 // draw axis label
+                 athleteGroup.selectAll(".axislabel")
+                     .data(featureData)
+                     .join(
+                         enter => enter.append("text")
+                             .attr("x", d => d.label_coord.x)
+                             .attr("y", d => d.label_coord.y)
+                             .attr("class", "label")
+                             .text(d => d.name)
+                           //  .style("font-size", "14px")
+                     )
+                     .attr("transform",
+                         "translate(-10, 5)");
+                 let line = d3.line()
+                     .x(d => d.x)
+                     .y(d => d.y);
+ 
+ 
+                 function getPathCoordinates(data_point) {
+                     let coordinates = [];
+                     for (var i = 0; i < features.length; i++) {
+                         let ft_name = features[i];
+                         let angle = (Math.PI / 2) + (2 * Math.PI * i / features.length);
+                         coordinates.push(angleToCoordinate(angle, data_point[ft_name]));
+                     }
+                     return coordinates;
+                 }
+                 const opacity_on = 0.5;
+                 const opacity_off = 0;
+ 
+                 // Create a rectangle for each athlete in a single vertical line
+                 athleteGroup.selectAll("myrects")
+                     .data(selectedAthletes)
+                     .enter()
+                     .append("rect")
+                     .attr("x", function (d, i) {
+                         even = i % 2
+                         if (width > 500) {
+                             return margin.left;
+                         } else {
+                             return margin.left + even * width / 2;
+                         }
+                     })
+                     .attr("y", function (d, i) {
+                         if (width > 500) {
+                             return margin.top + i * (size + rectSpacing);
+                         } else {
+                             if (i < 2)
+                                 return height - 30;
+                             else
+                                 return height + rectSpacing;
+                         }
+                     })
+                     .attr("width", size)
+                     .attr("height", size)
+                     .attr("fill", (i) => color(i))
+                     .style("stroke", "Black")
+                     .style("stroke-width", 1)
+                     .style("opacity", 1)
+                     .on("click", function (d, i) {
+                         // Toggle opacity of the clicked rectangle
+                         const clickedRect = d3.select(this);
+                         const currentOpacity = parseFloat(clickedRect.style('opacity'));
+                         const newOpacity = currentOpacity === 1 ? lineOpacity : 1;
+                         clickedRect.style('opacity', newOpacity);
+ 
+ 
+                         // Replace spaces with hyphens in the class name
+                         const className = i.athleteName.replace(/\s+/g, '-').toLowerCase();
+                         const pathOpacity = currentOpacity === 1 ? opacity_off : opacity_on;
+                         // Select the path using the modified class name
+                         const clickedPath = athleteGroup.select(`.${className}`);
+                         clickedPath.transition()
+                             .ease(d3.easeLinear)
+                             .duration(300)
+                             .style("opacity", pathOpacity);
+                     });
+                 //Add athlete name next to rect
+                 athleteGroup.selectAll("mylabels")
+                     .data(selectedAthletes)
+                     .enter()
+                     .append("text")
+                     .attr("class", "label")
+                     .attr("x", function (d, i) {
+                         even = i % 2
+                         if (width > 500) {
+                             return margin.left + size + rectSpacing;
+                         } else {
+                             return margin.left + even * width / 2 + size + rectSpacing;
+                         }
+                     })
+                     .attr("y", function (d, i) {
+                         if (width > 500) {
+                             return margin.top + i * (size + rectSpacing) + size / 2;
+                         } else {
+                             if (i < 2)
+                                 return height + size / 2 + rectSpacing - 30;
+                             else
+                                 return height + size / 2 + rectSpacing;
+                         }
+                     })
+                     .text((i) => i.athleteName)
+                     .attr("fill", (i) => color(i))
+                //     .attr("text-anchor", "left")
+                     .style("alignment-baseline", "middle");
+                  //   .style("font-size", "12px")
+ 
+ 
+ 
+                 // draw the path element
+                 athleteGroup.selectAll("path")
+                     .data(selectedAthletes)
+                     .join(
+                         enter => enter.append("path")
+                             .attr("d", d => line(getPathCoordinates(d.values)))
+                             .attr("class", d => {
+                                 // Replace spaces with hyphens in the class name
+                                 const className = d.athleteName.replace(/\s+/g, '-').toLowerCase();
+                                 return className;
+                             })
+                             .attr("stroke-width", 3)
+                             .attr("stroke", (i) => color(i))
+                             .attr("fill", (i) => color(i))
+                             .attr("stroke-opacity", 1)
+                             .style("opacity", opacity_on)
+                     );
+ 
+             };
+         
+ 
      </script>
  </body>
  
