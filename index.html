@@ -59,10 +59,10 @@ By following these steps, you can create a free website that allows users to upl
          <div id="chart_problems"></div>
          <div id="chart_title"></div>
          <div id="development_chart"></div>
-         <h2>Spider Chart</h2>
+         <div id="spiderchart_title"></div>
          <div id="spider_chart" style="width: 100%;"></div>
+         <div id="hit_counter"><span id="hitCount">0</span></div>
      </div>
- 
      <script src="https://d3js.org/d3-color.v1.min.js"> </script>
      <script src="https://d3js.org/d3-interpolate.v1.min.js"> </script>
      <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"> </script>
@@ -1108,6 +1108,10 @@ By following these steps, you can create a free website that allows users to upl
  
  
          function drawSpiderChart(selectedAthletes) {
+             let chartTitleDiv = document.getElementById("spiderchart_title");
+ 
+             // Update the inner HTML of the div with the new title
+             chartTitleDiv.innerHTML = "<h3> Spider Chart </h3>";
              
              var selectedAthletes = [];
              for (let i = 0; i < athleteIndexArray.length; i++) {
@@ -1347,6 +1351,25 @@ By following these steps, you can create a free website that allows users to upl
  
              };
          
+ 
+ 
+ 
+ 
+ 
+         // Function to retrieve the current hit count from localStorage
+         function getHitCount() {
+             return localStorage.getItem('hitCount') || '0';
+         }
+ 
+         // Function to update the hit count and display it on the page
+         function updateHitCount() {
+             var hitCount = parseInt(getHitCount()) + 1;
+             localStorage.setItem('hitCount', hitCount);
+             document.getElementById('hitCount').textContent = hitCount;
+         }
+ 
+         // Call the updateHitCount function to increment the hit count
+         updateHitCount();
  
      </script>
  </body>
