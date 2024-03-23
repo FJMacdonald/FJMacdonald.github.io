@@ -68,6 +68,7 @@ By following these steps, you can create a free website that allows users to upl
      <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"> </script>
      <script src="https://d3js.org/d3.v7.min.js"></script>
      <script>
+         const errorResult = 99999;
          const athletesArray = [];
          const leadersArray = [];
          const spiderChartArray = [];
@@ -167,8 +168,8 @@ By following these steps, you can create a free website that allows users to upl
              const bike1 = convertToSeconds(results[0]["Bike"]);
              const t21 = convertToSeconds(results[0]["T2"]);
              const run1 = convertToSeconds(results[0]["Run"]);
-             var fastestSplit = [swim1, t11, bike1, t21, run1];
-             var slowestSplit = [swim1, t11, bike1, t21, run1];
+             var fastestSplits = [swim1, t11, bike1, t21, run1];
+             var slowestSplits = [swim1, t11, bike1, t21, run1];
              var timePerDisipline = [];
              for (let i = 0; i < results.length; i++) {
                  var name = results[i]["Athlete First Name"] + " " + results[i]["Athlete Last Name"];
@@ -176,50 +177,50 @@ By following these steps, you can create a free website that allows users to upl
  
                  var swim = convertToSeconds(results[i]["Swim"]);
                  if (swim != 0) {
-                     if (swim < fastestSplit[0]) {
-                         fastestSplit[0] = swim;
-                     } else if (swim > slowestSplit[0]) {
-                         slowestSplit[0] = swim;
+                     if (swim < fastestSplits[0]) {
+                         fastestSplits[0] = swim;
+                     } else if (swim > slowestSplits[0]) {
+                         slowestSplits[0] = swim;
                      }
                  }
                  var t1 = convertToSeconds(results[i]["T1"]);
                  const t1_abs = t1;
                  if (t1 != 0) {
                      t1 += swim;
-                     if (t1_abs < fastestSplit[1]) {
-                         fastestSplit[1] = t1_abs;
-                     } else if (t1_abs > slowestSplit[1]) {
-                         slowestSplit[1] = t1_abs;
+                     if (t1_abs < fastestSplits[1]) {
+                         fastestSplits[1] = t1_abs;
+                     } else if (t1_abs > slowestSplits[1]) {
+                         slowestSplits[1] = t1_abs;
                      }
                  }
                  var bike = convertToSeconds(results[i]["Bike"]);
                  const bike_abs = bike;
                  if (bike != 0) {
                      bike += t1;
-                     if (bike_abs < fastestSplit[2]) {
-                         fastestSplit[2] = bike_abs;
-                     } else if (bike_abs > slowestSplit[2]) {
-                         slowestSplit[2] = bike_abs;
+                     if (bike_abs < fastestSplits[2]) {
+                         fastestSplits[2] = bike_abs;
+                     } else if (bike_abs > slowestSplits[2]) {
+                         slowestSplits[2] = bike_abs;
                      }
                  }
                  var t2 = convertToSeconds(results[i]["T2"]);
                  const t2_abs = t2;
                  if (t2 != 0) {
                      t2 += bike;
-                     if (t2_abs < fastestSplit[3]) {
-                         fastestSplit[3] = t2_abs;
-                     } else if (t2_abs > slowestSplit[3]) {
-                         slowestSplit[3] = t2_abs;
+                     if (t2_abs < fastestSplits[3]) {
+                         fastestSplits[3] = t2_abs;
+                     } else if (t2_abs > slowestSplits[3]) {
+                         slowestSplits[3] = t2_abs;
                      }
                  }
                  var run = convertToSeconds(results[i]["Run"]);
                  const run_abs = run;
                  if (run != 0) {
                      run += t2;
-                     if (run_abs < fastestSplit[4]) {
-                         fastestSplit[4] = run_abs;
-                     } else if (run_abs > slowestSplit[4]) {
-                         slowestSplit[4] = run_abs;
+                     if (run_abs < fastestSplits[4]) {
+                         fastestSplits[4] = run_abs;
+                     } else if (run_abs > slowestSplits[4]) {
+                         slowestSplits[4] = run_abs;
                      }
                  }
                  var finalTimeInSeconds = convertToSeconds(finalTime);
@@ -278,7 +279,7 @@ By following these steps, you can create a free website that allows users to upl
                  leadersArray[3] = leadT2;
                  leadersArray[4] = leadRun;
              }
-             normalizeResults(athletesArray, fastestSplit, slowestSplit)
+             normalizeResults(fastestSplits, slowestSplits);
  
              if (problemIndexArray.length > 0) {
                  let chartTitleDiv = document.getElementById("chart_problems");
@@ -430,22 +431,22 @@ By following these steps, you can create a free website that allows users to upl
                          athletesArray[i].swim = 0;
                      }
                      else if (athletesArray[i].t1 < 1.0) {
-                         athletesArray[i].t1 = 99999;
-                         athletesArray[i].bike = 99999;
-                         athletesArray[i].t2 = 99999;
-                         athletesArray[i].run = 99999;
+                         athletesArray[i].t1 = errorResult;
+                         athletesArray[i].bike = errorResult;
+                         athletesArray[i].t2 = errorResult;
+                         athletesArray[i].run = errorResult;
                      }
                      else if (athletesArray[i].bike < 1.0) {
-                         athletesArray[i].bike = 99999;
-                         athletesArray[i].t2 = 99999;
-                         athletesArray[i].run = 99999;
+                         athletesArray[i].bike = errorResult;
+                         athletesArray[i].t2 = errorResult;
+                         athletesArray[i].run = errorResult;
                      }
                      else if (athletesArray[i].t2 < 1.0) {
-                         athletesArray[i].t2 = 99999;
-                         athletesArray[i].run = 99999;
+                         athletesArray[i].t2 = errorResult;
+                         athletesArray[i].run = errorResult;
                      }
                      else if (athletesArray[i].run < 1.0) {
-                         athletesArray[i].run = 99999;
+                         athletesArray[i].run = errorResult;
                      }
                  }
                  var values = [];
@@ -1034,7 +1035,7 @@ By following these steps, you can create a free website that allows users to upl
                  'SXM': '🇸🇽', 'SVK': '🇸🇰', 'SVN': '🇸🇮', 'SLB': '🇸🇧', 'SOM': '🇸🇴',
                  'ZAF': '🇿🇦', 'USA': '🇺🇸', 'GER': '🇩🇪', 'ESP': '🇪🇸', 'NED': '🇳🇱',
                  'DEN': '🇩🇰', 'GBR': '🇬🇧', 'RSA': '🇿🇦', 'SUI': '🇨🇭', 'CHI': '🇨🇱',
-                 'BER': '🇧🇲', 'ZIM': '🇿🇼', 'VEN': '🇻🇪', 'CRC': '🇨🇷',
+                 'BER': '🇧🇲', 'ZIM': '🇿🇼', 'VEN': '🇻🇪', 'CRC': '🇨🇷', 'GUA': '🇬🇹',
              }
              return flagMappings[countryCode] || countryCode;
          }
@@ -1055,13 +1056,34 @@ By following these steps, you can create a free website that allows users to upl
  
  
     
-         function normalizeResults(athletesArray, fastestSplits, slowestSplits) {
+         function normalizeResults(fastestSplits, slowestSplits) {
              for (let i = 0; i < athletesArray.length; i++) {
-                 const normalizedSwim = 1 - (athletesArray[i].timePerDisipline[0] - fastestSplits[0]) / (slowestSplits[0] - fastestSplits[0]);
-                 const normalizedT1 = 1 - (athletesArray[i].timePerDisipline[1] - fastestSplits[1]) / (slowestSplits[1] - fastestSplits[1]);
-                 const normalizedBike = 1 - (athletesArray[i].timePerDisipline[2] - fastestSplits[2]) / (slowestSplits[2] - fastestSplits[2]);
-                 const normalizedT2 = 1 - (athletesArray[i].timePerDisipline[3] - fastestSplits[3]) / (slowestSplits[3] - fastestSplits[3]);
-                 const normalizedRun = 1 - (athletesArray[i].timePerDisipline[4] - fastestSplits[4]) / (slowestSplits[4] - fastestSplits[4]);
+                 var normalizedSwim = 1 - (athletesArray[i].timePerDisipline[0] - fastestSplits[0]) / (slowestSplits[0] - fastestSplits[0]);
+                 var normalizedT1 = 1 - (athletesArray[i].timePerDisipline[1] - fastestSplits[1]) / (slowestSplits[1] - fastestSplits[1]);
+                 var normalizedBike = 1 - (athletesArray[i].timePerDisipline[2] - fastestSplits[2]) / (slowestSplits[2] - fastestSplits[2]);
+                 var normalizedT2 = 1 - (athletesArray[i].timePerDisipline[3] - fastestSplits[3]) / (slowestSplits[3] - fastestSplits[3]);
+                 var normalizedRun = 1 - (athletesArray[i].timePerDisipline[4] - fastestSplits[4]) / (slowestSplits[4] - fastestSplits[4]);
+                 //using > 2 in case a normalized value ends up as 1.00002
+                 if (normalizedSwim > 2){
+                     console.log(athletesArray[i].athleteName, "swim", athletesArray[i].timePerDisipline[0]);
+                     normalizedSwim = 0;
+                 }
+                 if (normalizedT1 > 2){
+                     console.log(athletesArray[i].athleteName, "t1", athletesArray[i].timePerDisipline[1]);
+                     normalizedT1 = 0;
+                 }
+                 if (normalizedBike > 2){
+                     console.log(athletesArray[i].athleteName, "bike", athletesArray[i].timePerDisipline[2]);
+                     normalizedBike = 0;
+                 }
+                 if (normalizedT2 > 2){
+                     console.log(athletesArray[i].athleteName, "t2", athletesArray[i].timePerDisipline[3]);
+                     normalizedT2 = 0;
+                 }                
+                 if (normalizedRun > 2){
+                     console.log(athletesArray[i].athleteName, "run", athletesArray[i].timePerDisipline[4]);
+                     normalizedRun = 0;
+                 }
                  spiderChartArray.push({
                      athleteName: athletesArray[i].athleteName,
                      values: {
@@ -1121,8 +1143,6 @@ By following these steps, you can create a free website that allows users to upl
                  .attr("stroke-width", 2)
                  .attr("fill", "transparent");
  
-             //     updateChart(selectedAthletes);
-             // function updateChart(selection) {
                  //clear previous graph
                  d3.select('spider_svg').selectAll('.athlete-group').remove();
                  // Create a group for all athletes
@@ -1209,7 +1229,6 @@ By following these steps, you can create a free website that allows users to upl
                              .attr("y", d => d.label_coord.y)
                              .attr("class", "label")
                              .text(d => d.name)
-                           //  .style("font-size", "14px")
                      )
                      .attr("transform",
                          "translate(-10, 5)");
@@ -1303,9 +1322,8 @@ By following these steps, you can create a free website that allows users to upl
                      })
                      .text((i) => i.athleteName)
                      .attr("fill", (i) => color(i))
-                //     .attr("text-anchor", "left")
                      .style("alignment-baseline", "middle");
-                  //   .style("font-size", "12px")
+ 
  
  
  
