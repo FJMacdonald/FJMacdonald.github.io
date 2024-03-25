@@ -17,7 +17,7 @@ h4, h5, h6 {
     text-align: left;
 }
 body {
-    background-color: rgb(221, 233, 238);
+    /* background-color: rgb(221, 233, 238); */
     margin-left: 20px;
 }
 .button {
