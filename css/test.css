@@ -1,46 +1,85 @@
 /* class = "label" used on graph */
 * {
-    font-family: 'Courier New';
+  font-family: 'Courier New';
 }
 .label {
-  text-align: center;
-  color: black;
-  font-size: 14;
-  font-family: 'Courier New';
-  text-anchor: left;
+text-align: center;
+color: black;
+font-size: 14;
+font-family: 'Courier New';
+text-anchor: left;
 }
+
 
 h1, h2, h3  {
-    text-align: center;
+  text-align: center;
 }
 h4, h5, h6 {
-    text-align: left;
+  text-align: left;
 }
 body {
-    /* background-color: rgb(221, 233, 238); */
-    margin-left: 20px;
+  /* background-color: rgb(221, 233, 238); */
+  margin-left: 20px;
 }
 .button {
-    display: inline-block;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    background-color: #3891d9; /* Green */
-    color: white;
-    text-align: center;
-    text-decoration: none;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin: 5px;
-  }
-  
-  .button:hover {
-    background-color: #1b72a5; /* Darker green */
-  }
+  display: inline-block;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  background-color: #3891d9; 
+  color: white;
+  text-align: center;
+  text-decoration: none;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+  margin: 5px;
+}
+
+.button:hover {
+  background-color: #1b72a5; 
+}
 
 #chart_problems {
-    padding: 10px;
-    width: 400px;
-    margin-left: 20px;
-  }
+  padding: 10px;
+  width: 400px;
+  margin-left: 20px;
+}
+.popup {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #f9f9f9;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+}
+/* CSS for the close button */
+.popup-close {
+  position: absolute;
+  bottom: 20px; /* Adjust as needed */
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
+  background: none;
+  border: 1px solid #ccc;
+  font-size: 16px;
+  color: #333;
+  padding: 5px 10px;
+}
+
+
+
+/* CSS for the file buttons */
+.file-buttons {
+display: flex;
+align-items: center;
+}
+
+.file-buttons .button {
+margin-right: 8px; /* Adjust as needed */
+}
