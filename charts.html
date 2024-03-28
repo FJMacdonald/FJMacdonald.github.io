@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/test.css">
+    <title>CSV File Upload</title>
+</head>
+
+<body>
+
+
+    <label for="back_to_files">Return to race selection:</label>
+    <!-- Back button -->
+    <button id="back_to_files" class="button back-button" onclick="returnToMain()">&#9664;</button>
+
+
+    <!-- HTML markup for the popup -->
+    <div id="issuePopup" class="popup">
+        <button id="close-popup" class="popup-close" onclick="closeIssuePopup()">Close</button>
+        <div id="issueString"></div>
+    </div>
+
+    <!-- Create some seperation -->
+    <br>
+    <hr>
+
+    <!-- Create a div where the graph will take place -->
+    <div>
+        <div id="chart_title"></div>
+        
+        <!-- Reset button -->
+        <button id="resetButton" class="button" style="display: none;">Reset</button>
+        
+        <!-- Issue button -->
+        <button id="issueButton" class="button" style="display: none;" onclick="showPopup()">Data Problems</button>
+
+        <div id="development_chart"></div>
+        <div id="spiderchart_title"></div>
+        <div id="spider_chart" style="width: 100%;"></div>
+    </div>
+    <script src="https://d3js.org/d3-color.v1.min.js"> </script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"> </script>
+    <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"> </script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="/js/developmentChart.js"></script>
+    <script src="/js/spiderChart.js"></script>
+    <script>
+
+        function returnToMain() {
+            window.location.href = "index.html";
+        }
+
+        // Access the data passed as parameters
+        const athletesArray = JSON.parse(localStorage.getItem("data1"));
+        const leadersArray = JSON.parse(localStorage.getItem("data2"));
+        const spiderChartArray = JSON.parse(localStorage.getItem("data3"));
+        const problemString = localStorage.getItem("strValue");
+        const title = localStorage.getItem("strValue2");
+
+
+        const chartTitle = document.getElementById('chart_title');
+        chartTitle.innerHTML = title
+
+        console.log("prob", problemString);
+
+        if (problemString){
+            document.getElementById('issueButton').style.display = 'inline-block';
+            // Add a click event listener to the issues button
+            document.getElementById("issueButton").addEventListener("click", showPopup);
+        }
+        function showPopup() {
+            console.log("in show popup")
+            document.getElementById('issuePopup').style.display = 'block';
+            document.getElementById('issueString').innerHTML = problemString;
+            // Add a click event listener to the issues button
+            document.getElementById("close-popup").addEventListener("click", closeIssuePopup);
+        }
+
+        // JavaScript function to close the popup
+        function closeIssuePopup() {
+            console.log("in close 2")
+            document.getElementById('issuePopup').style.display = 'none';
+        }
+
+        //draw the chart
+        drawChart(athletesArray, leadersArray, spiderChartArray);
+
+    </script>
+</body>
+</html>

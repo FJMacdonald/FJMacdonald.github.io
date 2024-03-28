@@ -1,6 +1,6 @@
 
 
-function drawSpiderChart(selectedAthletes) {
+function drawSpiderChart(spiderChartArray, athleteIndexArray) {
     let chartTitleDiv = document.getElementById("spiderchart_title");
 
     // Update the inner HTML of the div with the new title

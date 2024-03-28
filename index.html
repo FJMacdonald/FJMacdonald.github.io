@@ -52,29 +52,10 @@ By following these steps, you can create a free website that allows users to upl
          </div>
      </div>
  
-     <!-- HTML markup for the popup -->
-     <div id="issuePopup" class="popup">
-         <button id="close-popup" class="popup-close" onclick="closeIssuePopup()">Close</button>
-         <div id="issueString"></div>
-     </div>
  
-     <!-- Create some seperation -->
-     <br>
-     <hr>
  
-     <!-- Create a div where the graph will take place -->
+ 
      <div>
-         <div id="chart_title"></div>
-         
-         <!-- Reset button -->
-         <button id="resetButton" class="button" style="display: none;">Reset</button>
-         
-         <!-- Issue button -->
-         <button id="issueButton" class="button" style="display: none;" onclick="showPopup()">Report Issue</button>
-         
-         <div id="development_chart"></div>
-         <div id="spiderchart_title"></div>
-         <div id="spider_chart" style="width: 100%;"></div>
          <footer>
              <div id="hitCounter" style="font-size: 6px"></div>
          </footer>
@@ -88,6 +69,9 @@ By following these steps, you can create a free website that allows users to upl
      <script>
  
      document.addEventListener('DOMContentLoaded', function() {
+ 
+         var titlename = "";
+ 
          function openPopup() {
              var popup = document.getElementById("popup");
              popup.style.display = "block";
@@ -144,7 +128,6 @@ By following these steps, you can create a free website that allows users to upl
  
          // Create buttons for each year
          const fileButtonsDiv = document.getElementById("fileButtons");
-       //  fileButtonsDiv.style = "display: flex; align-items: center;";
          fileButtonsDiv.style.display = "flex";
          fileButtonsDiv.style.alignItems = "flex-start";
          fileButtonsDiv.style.flexDirection = "column";
@@ -155,7 +138,6 @@ By following these steps, you can create a free website that allows users to upl
  
              // Add margin to each button
              buttons.forEach(button => {
-                 console.log("styling", button);
                  button.style.margin = "5px"; // Adjust the margin as needed
                  button.style.padding = "10px 20px"; // Adjust padding as needed
                  button.style.border = "1px solid #ccc"; // Add border
@@ -166,11 +148,9 @@ By following these steps, you can create a free website that allows users to upl
                  button.style.color = "white";
                  button.style.display = "inline-block";
                  button.style.boxShadow = "20px";
-                 // button.style.text-align = "center";
-                 // button.style.text-decoration = "none";
- 
                  button.style.transition  = "background-color 0.3s";
-                   // Add event listeners for hover effect
+ 
+                 // Add event listeners for hover effect
                  button.addEventListener("mouseenter", function() {
                      // Change background color on hover
                      button.style.backgroundColor = "#1b72a5"; 
@@ -239,6 +219,7 @@ By following these steps, you can create a free website that allows users to upl
                      // Handle file selection here
                      // Construct the URL for the selected file
                      const fileURL = '/results/' + filename;
+                     titlename = filename;
                      // Fetch the file
                      fetch(fileURL)
                          .then(response => response.text())
@@ -259,15 +240,11 @@ By following these steps, you can create a free website that allows users to upl
  
  
          
-         const errorResult = 99999;
          const athletesArray = [];
-         const leadersArray = [];
-         const spiderChartArray = [];
-         var athleteIndexArray = [];
-         var problemString = ""; //used incase problems with resuts file
  
-         var max_time_lag = 0;
-         var title = "";
+ 
+ 
+ 
  
          
  
@@ -277,33 +254,23 @@ By following these steps, you can create a free website that allows users to upl
              // clear any previous chart
              var svg = d3.select("#development_chart")
              svg.selectAll('*').remove();
-             problemString = "";
-             // clear previous problem data sets
-             // let chartProblemDiv = document.getElementById("chart_problems");
-             // console.log(chartProblemDiv);
-             // chartProblemDiv.innerHTML = "";
-             // chartProblemDiv.style.border = "none";
  
              //reset the data arrays
              athletesArray.length = 0
-             leadersArray.length = 0
-             max_time_lag = 0;
  
              if (event.target) {
                  const file = event.target.files[0]; // Get the uploaded file
-                 title = file.name.replace(/Results for |.csv/g, ""); // Extract title from filename
+                 titlename = file.filename;
                  const reader = new FileReader(); // Create a new FileReader object
                  reader.onload = function (e) {
                      const csvData = e.target.result; // Get the CSV data
-                     processData(csvData, athletesArray, leadersArray);
-                     drawChart(athletesArray, leadersArray, max_time_lag, problemString);
+                     processData(csvData, athletesArray);
                  };
                  // Read the uploaded file as text
                  reader.readAsText(file);  
              } else {
                  // If event does not contain file information, assume it's the file content
-                 processData(event, athletesArray, leadersArray);
-                 drawChart(athletesArray, leadersArray, max_time_lag, problemString);
+                 processData(event, athletesArray);
              }
          }
  
@@ -323,7 +290,8 @@ By following these steps, you can create a free website that allows users to upl
          }
  
          // Function to process csv data into arrays used by drawChart
-         function processData(csvData, athletesArray, leadersArray) {
+         function processData(csvData, athletesArray) {
+             var leadersArray = [];
              const lines = csvData.split('\n');
              const headers = lines[0].split(',');
  
@@ -463,8 +431,9 @@ By following these steps, you can create a free website that allows users to upl
                  leadersArray[3] = leadT2;
                  leadersArray[4] = leadRun;
              }
-             normalizeResults(fastestSplits, slowestSplits);
- 
+             var spiderChartArray = [];
+             normalizeResults(fastestSplits, slowestSplits, spiderChartArray);
+             var problemString = "";
              if (problemIndexArray.length > 0) {
  
                  problemString = "There were issues with the following " + problemIndexArray.length + " athlete results:<ul>"
@@ -474,9 +443,42 @@ By following these steps, you can create a free website that allows users to upl
                          problemString += "<li>" + athletesArray[problemIndexArray[i]].athleteName + "</li>";
                          athletesArray[problemIndexArray[i]].athleteName += "***";
                      }
+                     else {
+                         problemString = "";
+                     }
                  }
-                 problemString += "</ul>"
+                 if (problemString != "") {
+                     problemString += "</ul>";
+                 }
+                
              }
+             console.log(problemString);
+             // Storing data in local storage
+             localStorage.clear();
+             localStorage.setItem("data1", JSON.stringify(athletesArray));
+             localStorage.setItem("data2", JSON.stringify(leadersArray));
+             localStorage.setItem("data3", JSON.stringify(spiderChartArray));
+             localStorage.setItem("strValue", problemString);
+             // Extract the chart title from the filename
+             const filetitle = titlename.replace(/Results for |.csv/g, ""); // Extract title from filename
+             localStorage.setItem("strValue2", filetitle);
+ 
+             // Measure length
+             var dataSizeInBytes = new Blob([JSON.stringify(athletesArray)]).size;
+             console.log(dataSizeInBytes);
+             // Check against limits (example limit is 5 MB)
+             var localStorageLimitInBytes = 5 * 1024 * 1024; // 5 MB in bytes
+             if (dataSizeInBytes > localStorageLimitInBytes) {
+                 console.log("Exceeded local storage limit");
+             } else {
+                 console.log("Within local storage limit");
+                 // Redirect with parameters as query parameters
+                  window.location.href = "charts.html";
+             }
+             
+ 
+ 
+ 
          }
  
  
@@ -490,7 +492,7 @@ By following these steps, you can create a free website that allows users to upl
  
  
     
-         function normalizeResults(fastestSplits, slowestSplits) {
+         function normalizeResults(fastestSplits, slowestSplits, spiderChartArray) {
              for (let i = 0; i < athletesArray.length; i++) {
                  var normalizedSwim = 1 - (athletesArray[i].timePerDisipline[0] - fastestSplits[0]) / (slowestSplits[0] - fastestSplits[0]);
                  var normalizedT1 = 1 - (athletesArray[i].timePerDisipline[1] - fastestSplits[1]) / (slowestSplits[1] - fastestSplits[1]);
@@ -549,7 +551,6 @@ By following these steps, you can create a free website that allows users to upl
                  localStorage.setItem('hitCount', hitCount);
                  console.log(hitCount);
                  const counter = document.getElementById("hitCounter");
-                 const other = document.getElementById("chart_title");
                  counter.innerHTML = hitCount;
                  counter.style = "font-size: 8px";
                  counter.style.color = "#F5F5F5";
