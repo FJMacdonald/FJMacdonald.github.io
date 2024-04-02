@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=yes">
     <link rel="stylesheet" href="/css/test.css">
     <title>CSV File Upload</title>
 </head>
@@ -27,19 +27,25 @@
     <hr>
 
     <!-- Create a div where the graph will take place -->
-    <div>
-        <div id="chart_title"></div>
-        
-        <!-- Reset button -->
-        <button id="resetButton" class="button" style="display: none;">Reset</button>
-        
-        <!-- Issue button -->
-        <button id="issueButton" class="button" style="display: none;" onclick="showPopup()">Data Problems</button>
 
-        <div id="development_chart"></div>
-        <div id="spiderchart_title"></div>
-        <div id="spider_chart" style="width: 100%;"></div>
+    <div id="chart_title"></div>
+        
+    <!-- Reset button -->
+    <button id="resetButton" class="button" style="display: none;">Reset</button>
+        
+    <!-- Issue button -->
+    <button id="issueButton" class="button" style="display: none;" onclick="showPopup()">Data Problems</button>
+        
+    <div id="development_chart"></div>
+    <div id="legend-container">
+        <ul id="legend-pages">
+          <!-- Legend pages will be dynamically populated here -->
+        </ul>
     </div>
+    <div id="legend-dots"></div>
+    <div id="spiderchart_title"></div>
+    <div id="spider_chart" style="width: 100%;"></div>
+
     <script src="https://d3js.org/d3-color.v1.min.js"> </script>
     <script src="https://d3js.org/d3-interpolate.v1.min.js"> </script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"> </script>
@@ -61,7 +67,9 @@
 
 
         const chartTitle = document.getElementById('chart_title');
-        chartTitle.innerHTML = title
+        chartTitle.innerHTML = title;
+        chartTitle.style = "font-size: 3.2vw";
+        chartTitle.style.textAlign = "center";
 
         console.log("prob", problemString);
 

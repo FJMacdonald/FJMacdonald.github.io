@@ -241,7 +241,7 @@ By following these steps, you can create a free website that allows users to upl
  
          
          const athletesArray = [];
- 
+         var athleteIndexArray = [];
  
  
  
@@ -454,30 +454,17 @@ By following these steps, you can create a free website that allows users to upl
              }
              console.log(problemString);
              // Storing data in local storage
-             localStorage.clear();
              localStorage.setItem("data1", JSON.stringify(athletesArray));
              localStorage.setItem("data2", JSON.stringify(leadersArray));
-             localStorage.setItem("data3", JSON.stringify(spiderChartArray));
              localStorage.setItem("strValue", problemString);
-             // Extract the chart title from the filename
+ 
+                       
              const filetitle = titlename.replace(/Results for |.csv/g, ""); // Extract title from filename
+ 
              localStorage.setItem("strValue2", filetitle);
  
-             // Measure length
-             var dataSizeInBytes = new Blob([JSON.stringify(athletesArray)]).size;
-             console.log(dataSizeInBytes);
-             // Check against limits (example limit is 5 MB)
-             var localStorageLimitInBytes = 5 * 1024 * 1024; // 5 MB in bytes
-             if (dataSizeInBytes > localStorageLimitInBytes) {
-                 console.log("Exceeded local storage limit");
-             } else {
-                 console.log("Within local storage limit");
-                 // Redirect with parameters as query parameters
-                  window.location.href = "charts.html";
-             }
-             
- 
- 
+             // Redirect with parameters as query parameters
+             window.location.href = "charts.html";
  
          }
  

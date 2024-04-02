@@ -183,20 +183,27 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         return formattedTime;
     }
 
-    // Define the size and spacing of the rectangles
-    const size = 25;
+
 
     //rectangles in the legend (athletes + teams)
     nRects = athletesArray.length
-    const clientWidth = d3.select("#development_chart").node().getBoundingClientRect().width;
+    const clientWidth = window.innerWidth;
+    const clientHeight = window.innerHeight;
     const nColumns = Math.trunc(clientWidth / 200);
-    const bottom = Math.ceil(nRects / nColumns) * size * 1.2 + 70;
+    const nRows = Math.trunc(nRects / nColumns);
+    // Define the size and spacing of the rectangles
+    const size = 25;
+    const bottom = 10;
+    var lineOpacity = "0.5";
+    var lineStroke = "1.0";
 
+    var circleRadius = 3;
+    const circleRadiusHover = 6;
 
     // set the dimensions and margins of the graph
-    var margin = { top: 40, right: 10, bottom: bottom, left: 70 },
+    var margin = { top: 40, right: 10, bottom: bottom, left: clientWidth / 14 },
         width = clientWidth - margin.left - margin.right,
-        height = 500
+        height = 0.6 * clientHeight;
     // append the svg object to the body of the page
     svg = d3.select("#development_chart")
         .append("svg")
@@ -237,8 +244,6 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
     // Define the initial yAxis
     const yAxis = d3.axisLeft(yScale).ticks(0);
 
-
-
     // Add x-axis
     var xAxis = d3.axisTop(xScale).ticks(0);
     svg.append("g")
@@ -250,11 +255,11 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         .attr("class", "y axis label")
         .call(yAxis)
         .append('text')
-        .attr("y", -45)
+        .attr("y", -clientWidth / 20)
         .attr("x", -10)
         .attr("transform", "rotate(-90)")
         .attr("fill", "#000")
-        .attr("font-size", "16")
+        // .attr("font-size", "16")
         .text("Time Behind Leader");
 
 
@@ -370,7 +375,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
         // Modify the font style for the tick labels
         yAxisGroup.selectAll(".tick text")
-            .attr("class", "label");
+            .attr("class", "label-small");
 
 
         // // Add y-axis gridlines
@@ -401,150 +406,294 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
     function updateChart(max_time_lag) {
 
+        function estimateColumnWidth() {
+            // Initialize variable to store the longest name
+            var longestName = "";
 
-        var lineOpacity = "0.5";
-        var lineStroke = "1.0";
-
-        var circleRadius = 3;
-        const circleRadiusHover = 6;
-
-
-        //  x position for rect
-        function rectPosX(d, i) {
-            return (i % nColumns) * (clientWidth / nColumns) - 50;
-        }
-        function rectPosY(d, i) {
-            return (height + Math.floor(i / nColumns) * 30 + 50);
-        }
-        //  x position for names
-        function labelPosX(d, i) {
-            return ((i % nColumns) * (clientWidth / nColumns) - 50) + 1.2 * size;
-        }
-        //  x position for country code
-        function labelPosX2(d, i) {
-            return ((i % nColumns) * (clientWidth / nColumns) - 50) + 1.2 * size + 120;
-        }
-        // y position for first name
-        function labelPosY(d, i) {
-            return (height + Math.floor(i / nColumns) * 30 + 50) + 0.4 * size;
-        }
-        // y position for last name
-        function labelPosY2(d, i) {
-            return (height + Math.floor(i / nColumns) * 30 + 50) + 0.9 * size;
-        }
-        // y position for country code
-        function labelPosY3(d, i) {
-            return (height + Math.floor(i / nColumns) * 30 + 50) + 0.6 * size;
-        }
-        //add the frame for the rectangle (so it doesn't disapear when opacity = 0)
-        svg.append("g")
-            .selectAll("outerRect")
-            .data(resultsArray)
-            .join("rect")
-            .attr("class", "outerRect")
-            .attr("x", rectPosX)
-            .attr("y", rectPosY)
-            .attr("width", size)
-            .attr("height", size)
-            .style("stroke", "Black")
-            .style("stroke-width", lineStroke)
-            .attr("fill", "white");
-        // the color for the rect but also the interactivity
-        svg.selectAll("innerRect")
-            .data(resultsArray)
-            .join("rect")
-            .attr("class", "innerRect")
-            .attr("x", rectPosX)
-            .attr("y", rectPosY)
-            .attr("width", size)
-            .attr("height", size)
-            .style("stroke", "Black")
-            .style("stroke-width", lineStroke)
-            .style('opacity', lineOpacity)
-            .attr("fill", function (d, i) { return colorPalette[i]; })
-            .on("click", function (d, i) {
-                // get the current state from the opacity
-                var athleteRect = d3.select(this);
-                var opacity = athleteRect.style("opacity");
-                // cycle through 3 states - normal, highlighted and remove
-                if (opacity == 0.5) {
-                    lineOpacity = 1.0
-                    lineStroke = 3.0
-                    circleRadius = 3
-                } else if (opacity == 1.0) {
-                    lineOpacity = 0.0
-                    lineStroke = 1.0
-                    circleRadius = 0
-                } else {
-                    lineOpacity = 0.5
-                    lineStroke = 1.0
-                    circleRadius = 3
+            // Iterate through the resultsArray to find the longest name
+            resultsArray.forEach(function (athlete) {
+                if (athlete.athleteName.length > longestName.length) {
+                    longestName = athlete.athleteName;
                 }
-                // set the new state of the rect
-                athleteRect.style("opacity", lineOpacity);
+            });
+            // Get the computed style of an element with class 'label'
+            var labelElement = document.querySelector('.label');
+            var computedStyle = window.getComputedStyle(labelElement);
 
-                // get the athlete index (with a mouse function(d, i) -  d is the mouse and i is the athlete)
-                const athleteIndex = d3.selectAll('.innerRect').nodes().indexOf(this);
+            // Extract the font size from the computed style
+            var fontSize = computedStyle.getPropertyValue('font-size');
 
-                // fiter for the corresponding athlete path & update it with new state
-                const athleteLine = svg.selectAll(".line").filter((d, i) => i === athleteIndex);
-                athleteLine.style("opacity", lineOpacity);
-                athleteLine.style("stroke-width", lineStroke);
+            // Create a temporary span element to measure the width of the name
+            var span = document.createElement('span');
+            span.textContent = longestName;
+            span.style.fontSize = fontSize;
+            span.style.visibility = 'hidden';
+            document.body.appendChild(span);
+            // Get the width of the span element
+            var width = span.offsetWidth;
+            // Remove the temporary span element
+            document.body.removeChild(span);
+            return width;
+        }
 
-                // fiter for the corresponding athlete label & update it with new state
-                const athletetext = svg.selectAll(".line-name").filter((d, i) => i === athleteIndex);
-                if (lineOpacity == 1.0) {
-                    athletetext.style("visibility", "visible");
-                    athleteIndexArray.push(athleteIndex);
-                } else {
-                    athletetext.style("visibility", "hidden");
-                    //remove athlete from spider chart
-                    let index = athleteIndexArray.indexOf(athleteIndex);
-                    if (index !== -1) {
-                        athleteIndexArray.splice(index, 1);
+        function addListItem(listItem, index) {
+            // Append the clickable rectangle
+            var innerRect = listItem.append('svg')
+                .attr('width', size) // Adjust width as needed
+                .attr('height', size) // Adjust height as needed
+                .style('display', 'inline-block') // Ensure the SVG and text are displayed inline
+                .selectAll('.innerRect') // Select existing .innerRect elements (if any)
+                .data([resultsArray[index]]) // Bind data to new .innerRect elements
+                .join('rect') // Join data to elements
+                .attr('class', 'innerRect')
+                .attr('width', size)
+                .attr('height', size)
+                .style('stroke', 'Black')
+                .style('stroke-width', lineStroke)
+                .style('opacity', lineOpacity)
+                .attr('fill', colorPalette[index])
+                .on('click', function (d, i) {
+                    // Handle click event for the rectangle
+                    var athleteRect = d3.select(this);
+                    var opacity = athleteRect.style('opacity');
+                    if (opacity === '0.5') {
+                        lineOpacity = '1.0';
+                        lineStroke = '3.0';
+                        circleRadius = 3;
+                    } else if (opacity === '1.0') {
+                        lineOpacity = '0.0';
+                        lineStroke = '1.0';
+                        circleRadius = 0;
+                    } else {
+                        lineOpacity = '0.5';
+                        lineStroke = '1.0';
+                        circleRadius = 3;
                     }
-                }
 
-                // fiter for the corresponding athlete path circles & update them with new state
-                const athleteCircles = svg.selectAll(".athlete-circle").filter(d => d.athleteIndex === athleteIndex);
-                athleteCircles.each(function (d) {
-                    d3.select(this)
-                        .style("opacity", lineOpacity)
-                        .attr("r", circleRadius);
+                    // set the new state of the rect
+                    athleteRect.style("opacity", lineOpacity);
+
+                    // Get the index of the clicked element's data in the resultsArray
+                    const athleteIndex = index;//resultsArray.findIndex(item => item === d);
+                    // Filter for the corresponding athlete path & update it with new state
+                    const athleteLine = svg.selectAll(".line").filter((d, i) => i === athleteIndex);
+                    athleteLine.style("opacity", lineOpacity);
+                    athleteLine.style("stroke-width", lineStroke);
+
+                    // Filter for the corresponding athlete label & update it with new state
+                    const athletetext = svg.selectAll(".line-name").filter((d, i) => i === athleteIndex);
+                    if (lineOpacity == 1.0) {
+                        athletetext.style("visibility", "visible");
+                        athleteIndexArray.push(athleteIndex);
+                    } else {
+                        athletetext.style("visibility", "hidden");
+                        // Remove athlete from spider chart
+                        let index = athleteIndexArray.indexOf(athleteIndex);
+                        if (index !== -1) {
+                            athleteIndexArray.splice(index, 1);
+                        }
+                    }
+
+                    // Filter for the corresponding athlete path circles & update them with new state
+                    const athleteCircles = svg.selectAll(".athlete-circle").filter(d => d.athleteIndex === athleteIndex);
+                    athleteCircles.each(function (d) {
+                        d3.select(this)
+                            .style("opacity", lineOpacity)
+                            .attr("r", circleRadius);
+                    });
+
+                    drawSpiderChart(spiderChartArray, athleteIndexArray);
                 });
 
-                drawSpiderChart(spiderChartArray, athleteIndexArray);
+            const nameParts = resultsArray[index].athleteName.split(" ");
+            // Extract the first name
+            const firstName = nameParts.shift();
+
+            // Append the athlete name and country on two lines
+            const placeSpan = listItem.append('span')
+                .style('display', 'inline-block') // Ensure the text is displayed inline
+                .style('vertical-align', 'top') // Align the text to the top of the rectangle
+                .attr("class", "label")
+                .text((index + 1) + '. '); // Display the athlete's place
+
+            // Get the width of the place span
+            const placeWidth = placeSpan.node().getBoundingClientRect().width;
+
+            // Append the first name
+            const firstSpan = listItem.append('span')
+                .style('display', 'inline-block') // Ensure the text is displayed inline
+                .style('vertical-align', 'top') // Align the text to the top of the rectangle
+                .attr("class", "label")
+                .text(firstName);
+
+            // Get the width of the first name span
+            const firstNameWidth = firstSpan.node().getBoundingClientRect().width;
+
+            listItem.append('span')
+                .style('display', 'block') // Ensure the text is displayed as a block
+                .style('margin-top', '-20px') // Adjust the margin-top to align vertically below the first name
+                .style('margin-left', 25 + 'px') // Adjust margin-left based on the width of the first name.attr("class", "label")
+                .style('float', 'left') // Right-align the text
+                .style('text-align', 'left') // Align the text to the right
+                .attr("class", "label")
+                .text(nameParts.pop() + resultsArray[index].country);//lastname + flag
+        }
+
+        function renderLegendPage(pageIndex) {
+            var athletesPerPage = 4;
+            // Calculate startIndex and endIndex based on pageIndex and athletesPerPage
+            var startIndex = pageIndex * athletesPerPage;
+            var endIndex = Math.min(startIndex + athletesPerPage, resultsArray.length);
+            console.log("startIndex", startIndex);
+            console.log("endIndex", endIndex);
+
+            var legendPage = d3.create('li');
+            for (var i = startIndex; i < endIndex; i++) {
+                (function (index) {
+                    var listItem = legendPage.append('div')
+                        .classed('legend-item', true);
+                    addListItem(listItem, index);
+                })(i);
+            }
+
+
+            // Update legend dots container
+            var legendDotsContainer = d3.select('#legend-dots');
+            legendDotsContainer.html('');
+
+            // Get the legend container and the legend item width
+            var legendContainer = document.getElementById('legend-container');
+
+            const containerWidth = legendContainer.offsetWidth;
+            const columnWidth = estimateColumnWidth();
+            console.log("containerWidth", containerWidth);
+            console.log("columnWidth", columnWidth);
+            const athletesPerColumn = 4; // Assuming 4 athletes per column
+            const maxAthletesOnPage = Math.floor(containerWidth / columnWidth);
+            const athletesOnPage = maxAthletesOnPage * athletesPerColumn;
+            console.log("athletesOnPage", athletesOnPage);
+            var numDots = Math.ceil(resultsArray.length / athletesOnPage);
+            console.log("numDots", numDots);
+            // Render legend dots
+            for (var i = 0; i < numDots; i++) {
+                var dot = legendDotsContainer.append('span')
+                    .attr('class', 'legend-dot')
+                    .attr('data-page-index', i);
+            }
+            return legendPage.node();
+        }
+
+
+
+
+
+        function renderLegend() {
+            var numPages = Math.ceil(resultsArray.length / 4);
+            var legendPagesContainer = document.getElementById('legend-pages');
+
+            // Clear previous legend pages
+            legendPagesContainer.innerHTML = '';
+
+            // Render legend pages
+            for (var i = 0; i < numPages; i++) {
+                var legendPage = renderLegendPage(i);
+                legendPagesContainer.appendChild(legendPage);
+            }
+        }
+
+        function swipeLegend(direction) {
+            var legendContainer = document.getElementById('legend-container');
+            var currentPage = legendContainer.scrollLeft / legendContainer.offsetWidth;
+            var newPage;
+
+            if (direction === 'left') {
+                newPage = Math.max(currentPage - 1, 0);
+            } else if (direction === 'right') {
+                newPage = Math.min(currentPage + 1, Math.ceil(resultsArray.length / 4) - 1);
+            }
+
+            legendContainer.scrollTo({
+                left: newPage * legendContainer.offsetWidth,
+                behavior: 'smooth'
             });
-        //Add athlete first name next to rect
-        svg.selectAll(".label-firstname")
-            .data(resultsArray)
-            .join("text")
-            .attr("class", "label")
-            .attr("x", labelPosX)
-            .attr("y", labelPosY)
-            .attr("fill", function (d, i) { return colorPalette[i]; })
-            .text(function (d) { return d.athleteName.split(' ')[0]; });
+            console.log("page index", Math.round(newPage));
+            highlightLegendDot(Math.round(newPage));
 
-        //Add last name next to rect
-        svg.selectAll(".label-lastname")
-            .data(resultsArray)
-            .join("text")
-            .attr("class", "label")
-            .attr("x", labelPosX)
-            .attr("y", labelPosY2)
-            .attr("fill", function (d, i) { return colorPalette[i]; })
-            .text(function (d) { return d.athleteName.split(' ')[1] + " " + d.status; });
+        }
 
-        //Add country code next to name
-        svg.selectAll(".label-country")
-            .data(resultsArray)
-            .join("text")
-            .attr("class", "label")
-            .attr("x", labelPosX2)
-            .attr("y", labelPosY3)
-            .attr("fill", function (d, i) { return colorPalette[i]; })
-            .text(function (d) { return d.country; })
-            .attr("font-size", 25);
+        // Detect swipe gestures
+        var startX = 0;
+
+        document.addEventListener('touchstart', function (event) {
+            startX = event.touches[0].clientX;
+        });
+
+        document.addEventListener('touchend', function (event) {
+            var endX = event.changedTouches[0].clientX;
+            var deltaX = endX - startX;
+            var threshold = 50; // Adjust the threshold for swipe detection
+
+            if (Math.abs(deltaX) > threshold) {
+                if (deltaX > 0) {
+                    swipeLegend('left');
+                } else {
+                    swipeLegend('right');
+                }
+            }
+        });
+
+        // Mouse event listeners as fallback
+        document.addEventListener('mousedown', function (event) {
+            startX = event.clientX;
+            startY = event.clientY;
+        });
+
+        document.addEventListener('mouseup', function (event) {
+            var endX = event.clientX;
+            var deltaX = endX - startX;
+            var threshold = 50; // Adjust the threshold for swipe detection
+
+            if (Math.abs(deltaX) > threshold) {
+                if (deltaX > 0) {
+                    swipeLegend('left');
+                } else {
+                    swipeLegend('right');
+                }
+            }
+        });
+        // Render legend initially
+        renderLegend();
+        // Highlight the first dot initially    
+        highlightLegendDot(0);
+
+
+        function highlightLegendDot(pageIndex) {
+            var legendDots = document.querySelectorAll('.legend-dot');
+            for (var i = 0; i < legendDots.length; i++) {
+                legendDots[i].classList.remove('active');
+            }
+            legendDots[pageIndex].classList.add('active');
+        }
+
+        // Event listener for legend dot clicks
+        document.getElementById('legend-dots').addEventListener('click', function (event) {
+            if (event.target.classList.contains('legend-dot')) {
+                var pageIndex = parseInt(event.target.dataset.pageIndex);
+                console.log(pageIndex);
+                var legendContainer = document.getElementById('legend-container');
+                legendContainer.scrollTo({
+                    left: pageIndex * legendContainer.offsetWidth,
+                    behavior: 'smooth'
+                });
+                highlightLegendDot(pageIndex);
+            }
+        });
+
+        // Event listener for legend container scroll
+        document.getElementById('legend-container').addEventListener('scroll', function () {
+            var pageIndex = Math.round(this.scrollLeft / this.offsetWidth);
+        });
+
 
 
         //Draw path
