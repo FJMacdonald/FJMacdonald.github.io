@@ -203,7 +203,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
     // set the dimensions and margins of the graph
     var margin = { top: 40, right: 10, bottom: bottom, left: clientWidth / 14 },
         width = clientWidth - margin.left - margin.right,
-        height = 0.6 * clientHeight;
+        height = 0.5 * clientHeight;
     // append the svg object to the body of the page
     svg = d3.select("#development_chart")
         .append("svg")
@@ -298,13 +298,55 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
         // Reset the brush to its initial position
         svg.select(".brush").call(yBrush.move, null);
-
+            
     }
     // Handle touch events
-    svg.on("touchstart", yBrushed)
-        .on("touchmove", yBrushed)
-        .on("touchend", yBrushed);
+    // svg.on("touchstart", yBrushed)
+    //     .on("touchmove", yBrushed)
+    //     .on("touchend", yBrushed);
+    // Define brush function
+    function brushWithTwoFingers() {
+        const touchPoints = d3.touches(svg.node()).length;
+        if (touchPoints === 2) {
+            // Invoke the brush function
+            yBrush.move(svg.select(".brush"), null);
+        }
+    }
 
+
+        // Function to handle touch start event
+        function handleTouchStart(event, d) {
+            // Highlight the line or perform any action you want
+            d3.select(this).attr("stroke-width", 4);
+            // You can also display additional information
+            // or trigger any other action based on the touched line
+        }
+
+        // Function to handle touch end event
+        function handleTouchEnd(event, d) {
+            // Remove the highlighting or revert back to original state
+            d3.select(this).attr("stroke-width", 2);
+            // You can hide the additional information displayed during touch start
+        }
+
+        // Apply touch event listeners to the lines
+        svg.selectAll(".line")
+            .on("touchstart", handleTouchStart)
+            .on("touchend", handleTouchEnd);
+
+    // Apply touch event listeners for brush and zoom
+    // svg.on("touchstart", function() {
+    //         d3.event.preventDefault();
+    //         brushWithTwoFingers(); // Check for brush action with two fingers
+    //     })
+    //     .on("touchmove", function() {
+    //         d3.event.preventDefault();
+    //         brushWithTwoFingers(); // Check for brush action with two fingers
+    //     })
+    //     .on("touchend", function() {
+    //         d3.event.preventDefault();
+    //         brushWithTwoFingers(); // Check for brush action with two fingers
+    //     });
 
     function updateLinesAndCircles() {
 

@@ -16,7 +16,7 @@ function drawSpiderChart(spiderChartArray, athleteIndexArray) {
     var width = d3.select("#spider_chart").node().getBoundingClientRect().width - margin.left - margin.right;
     var height = 400 - margin.top - margin.bottom;
     if (width < 500)
-        margin.bottom = 50;
+        margin.bottom = 130;
     // append the svg object to the body of the page
     d3.select("#spider_chart").selectAll('*').remove();
     var spider_svg = d3.select("#spider_chart")
@@ -164,10 +164,17 @@ function drawSpiderChart(spiderChartArray, athleteIndexArray) {
                 return margin.top + i * (size + rectSpacing);
             } else {
                 if (i < 2)
-                    return height - 30;
+                    return height + size / 2 + rectSpacing - 45;
+                else if (i < 4)
+                    return height + size / 2 + rectSpacing - 15;
+                else if (i < 6)
+                    return height + size / 2 + rectSpacing + 15;
+                else if (i < 8)
+                    return height + size / 2 + rectSpacing + 45;
                 else
-                    return height + rectSpacing;
+                    return height + size / 2 + rectSpacing + 75;
             }
+            
         })
         .attr("width", size)
         .attr("height", size)
@@ -213,9 +220,16 @@ function drawSpiderChart(spiderChartArray, athleteIndexArray) {
             } else {
                 if (i < 2)
                     return height + size / 2 + rectSpacing - 30;
-                else
+                else if (i < 4)
                     return height + size / 2 + rectSpacing;
+                else if (i < 6)
+                    return height + size / 2 + rectSpacing + 30;
+                else if (i < 8)
+                    return height + size / 2 + rectSpacing + 60;
+                else
+                    return height + size / 2 + rectSpacing + 90;
             }
+            
         })
         .text((i) => i.athleteName)
         .attr("fill", (i) => color(i))
