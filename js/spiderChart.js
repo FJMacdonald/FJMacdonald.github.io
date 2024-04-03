@@ -1,6 +1,7 @@
 
 
-function drawSpiderChart(spiderChartArray, athleteIndexArray) {
+function drawSpiderChart(spiderChartArray, athleteIndexArray, colorPalette) {
+    
     let chartTitleDiv = document.getElementById("spiderchart_title");
 
     // Update the inner HTML of the div with the new title
@@ -59,9 +60,9 @@ function drawSpiderChart(spiderChartArray, athleteIndexArray) {
     let features = ["Swim", "T1", "Bike", "T2", "Run"];
 
 
-    var color = d3.scaleOrdinal()
-        .domain(selectedAthletes)
-        .range(d3.schemeSet2);
+    // var color = d3.scaleOrdinal()
+    //     .domain(selectedAthletes)
+    //     .range(d3.schemeSet2);
 
     let radialScale = d3.scaleLinear()
         .domain([0, 1])
@@ -178,7 +179,7 @@ function drawSpiderChart(spiderChartArray, athleteIndexArray) {
         })
         .attr("width", size)
         .attr("height", size)
-        .attr("fill", (i) => color(i))
+        .attr("fill", (d, i) => colorPalette[athleteIndexArray[i]])
         .style("stroke", "Black")
         .style("stroke-width", 1)
         .style("opacity", 1)
@@ -232,7 +233,7 @@ function drawSpiderChart(spiderChartArray, athleteIndexArray) {
             
         })
         .text((i) => i.athleteName)
-        .attr("fill", (i) => color(i))
+        .attr("fill", (d, i) => colorPalette[athleteIndexArray[i]])
         .style("alignment-baseline", "middle");
 
 
@@ -250,8 +251,8 @@ function drawSpiderChart(spiderChartArray, athleteIndexArray) {
                     return className;
                 })
                 .attr("stroke-width", 3)
-                .attr("stroke", (i) => color(i))
-                .attr("fill", (i) => color(i))
+                .attr("stroke",  (d, i) => colorPalette[athleteIndexArray[i]])
+                .attr("fill", (d, i) => colorPalette[athleteIndexArray[i]])
                 .attr("stroke-opacity", 1)
                 .style("opacity", opacity_on)
         );

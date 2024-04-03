@@ -5,11 +5,11 @@ var brushingEnabled = true;
 // Draws the chart
 function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
-        // console.log(athletesArray);
+    // console.log(athletesArray);
     // console.log(leadersArray);
     // console.log(spiderChartArray);
 
-    
+
     if (athletesArray.length == 0) {
         return
     }
@@ -34,15 +34,15 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
                 .duration(200)
                 .style("opacity", .9);
         })
-        .on("mousemove", function (event) {
-            tooltip.style("left", (event.pageX + 10) + "px")
-                .style("top", (event.pageY - 30) + "px");
-        })
-        .on("mouseout", function () {
-            tooltip.transition()
-                .duration(500)
-                .style("opacity", 0);
-        });
+            .on("mousemove", function (event) {
+                tooltip.style("left", (event.pageX + 10) + "px")
+                    .style("top", (event.pageY - 30) + "px");
+            })
+            .on("mouseout", function () {
+                tooltip.transition()
+                    .duration(500)
+                    .style("opacity", 0);
+            });
     }
 
     // Check if it's a touch device
@@ -51,7 +51,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         // Display zoom button with tooltip
         zoomButton.style("display", "inline-block");
         // Add a click event listener to the zoom button
-        zoomButton.on("click", function() {
+        zoomButton.on("click", function () {
             console.log("zoom on");
             toggleBrushing();
         });
@@ -61,62 +61,69 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
     }
     var resetButton = d3.select("#resetButton");
     // Add a click event listener to the reset button
-    resetButton.on("click", resetChart); 
-    
+    resetButton.on("click", resetChart);
+
 
 
     // Display tooltip explaining zoom button's use
     displayTooltip(resetButton, "click this button to return to unzoomed chart");
-
-    const colorPalette = [
-        "#FF5733", // Red
-        "#0074D9", // Cerulean
-        "#FF851B", // Orange
-        "#39CCCC", // Cyan
-        "#FF4136", // Scarlet
-        "#2ECC40", // Green
-        "#FFDC00", // Yellow
-        "#FF6B81", // Blush
-        "#FFD700", // Gold
+    
+//https://coolors.co/palettes/trending
+    const colorPalette = ["#FF204E",
+        "#A0153E",
+        "#5D0E41",
+        "#00224D",
+        "#5356FF",
+        "#378CE7",
+        "#67C6E3",
+        "#606c38", //olive
+        "#283618", //dark green
+        "#dda15e", //beige
+        "#bc6c25", //orange brown
+        "#cdb4db", //lilac
+        "#ffafcc", //pink
+        "#a2d2ff", //sky bllue
+        "#0077b6", //blue
+        "#00b4d8", //turquoise
         "#7FDBFF", // Azure
-        "#B10DC9", // Electric Purple
-        "#01FF70", // Lime
-        "#AAAAAA", // Grey
-        "#F012BE", // Magenta
-        "#3D9970", // Emerald
-        "#111111", // Black
-        "#F012BE", // Magenta
-        "#01FF70", // Lime
-        "#B10DC9", // Electric Purple
-        "#FF6B81", // Blush
-        "#0074D9", // Cerulean
-        "#FFD700", // Gold
-        "#AAAAAA", // Grey
-        "#7FDBFF", // Azure
-        "#2ECC40", // Green
-        "#FF4136", // Scarlet
-        "#FFDC00", // Yellow
-        "#FF851B", // Orange
-        "#0074D9", // Cerulean
-        "#FF6B81", // Blush
-        "#FFDC00", // Yellow
-        "#3D9970", // Emerald
-        "#FF851B", // Orange
-        "#F012BE", // Magenta
-        "#B10DC9", // Electric Purple
-        "#2ECC40", // Green
-        "#01FF70", // Lime
-        "#AAAAAA", // Grey
-        "#7FDBFF", // Azure
-        "#FF4136", // Scarlet
-        "#111111", // Black
-        "#FFD700", // Gold
-        "#0074D9", // Cerulean
-        "#FF5733", // Red
-        "#3D9970", // Emerald
-        "#FF6B81", // Blush
-        "#B10DC9", // Electric Purple
-        "#FF851B", // Orange
+        "#ffb703", //light orange
+        "#fb8500", // dark orange
+        "#2a9d8f", // green blue
+        "#264653", // steel blue
+        "#84a59d", // grey green
+        "#f4a261", // peach
+        "#e76f51", // brick
+        "#8d99ae", // grey
+        "#ff006e", //  bright pink
+        "#8338ec", // purple
+        "#84a98c", // light olive
+        "#52796f", // darker olive
+        "#9d8189", //mauve
+        "#e5989b", // pinkish
+        "#ffb4a2", // orange pink
+        "#ffb4a2", // brown
+        "#03045e", // navy
+        "#023e8a", // blue
+        "#0077b6", // blue
+        "#0096c7", // blue
+        "#00b4d8", // blue
+        "#48cae4", // blue
+        "#4a4e69", // dark grey
+        "#9a8c98", // light grey
+        "#c9ada7", // beige
+        "#386641", // green
+        "#6a994e", // green
+        "#a7c957", // green
+        "#38b000", // green
+        "#70e000", // green
+        "#f72585", // mag
+        "#b5179e", // mag2
+        "#7209b7", // purp
+        "#3a0ca3", // purp
+        "#3f37c9", // purp
+        "#4361ee", // blue
+        "#4895ef", //  blue
+        "#4cc9f0", // blue
         "#01FF70", // Lime
         "#FF4136", // Scarlet
         "#FFDC00", // Yellow
@@ -230,7 +237,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
             values: values,
         });
     }
-   // console.log("resultsArray", resultsArray);
+    // console.log("resultsArray", resultsArray);
 
     //This function takes an input time in seconds, calculates the minutes and remaining 
     //seconds, and formats them as "minutes:seconds". It also ensures that single-digit 
@@ -324,7 +331,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         if (isTouchDevice()) {
             brushingEnabled = !brushingEnabled;
         }
-        
+
         // If brushing is enabled, call the brush behavior on the SVG
         if (brushingEnabled) {
             area.call(yBrush);
@@ -342,8 +349,8 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
     var yBrush = d3.brushY()
         .extent([[0, 0], [width, height]])
         .on("end", yBrushed);
-  
-    
+
+
 
     // Create the area variable: where both the area and the brush take place
     var area = svg.append('g')
@@ -359,10 +366,10 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
             var yBrushExtent = event.selection.map(yScale.invert);
             zoomInOnChart(yBrushExtent);
             toggleBrushing();
-        }          
+        }
     }
 
-    function zoomInOnChart(yBrushExtent){
+    function zoomInOnChart(yBrushExtent) {
         // Update yScale domain
         yScale.domain(yBrushExtent);
 
@@ -505,7 +512,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
             // Extract the font size from the computed style
             var fontSize = computedStyle.getPropertyValue('font-size');
-            
+
             // Create a temporary span element to measure the width of the name
             var span = document.createElement('span');
             span.textContent = longestName;
@@ -587,7 +594,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
                             .attr("r", circleRadius);
                     });
 
-                    drawSpiderChart(spiderChartArray, athleteIndexArray);
+                    drawSpiderChart(spiderChartArray, athleteIndexArray, colorPalette);
                 });
 
             const nameParts = resultsArray[index].athleteName.split(" ");
@@ -638,27 +645,6 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
                     addListItem(listItem, index);
                 })(i);
             }
-
-
-            // Update legend dots container
-            var legendDotsContainer = d3.select('#legend-dots');
-            legendDotsContainer.html('');
-
-            // Get the legend container and the legend item width
-            var legendContainer = document.getElementById('legend-container');
-            const containerStyle = window.getComputedStyle(legendContainer);
-            const containerWidth = legendContainer.offsetWidth;
-
-            const columnWidth = estimateColumnWidth();
-            const columns = Math.floor(containerWidth / columnWidth);
-            const athletesOnPage = columns*4;
-            var numDots = Math.ceil(resultsArray.length / athletesOnPage);
-            // Render legend dots
-            for (var i = 0; i < numDots; i++) {
-                var dot = legendDotsContainer.append('span')
-                    .attr('class', 'legend-dot')
-                    .attr('data-page-index', i);
-            }
             return legendPage.node();
         }
 
@@ -680,98 +666,9 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
             }
         }
 
-        function swipeLegend(direction) {
-            var legendContainer = document.getElementById('legend-container');
-            var currentPage = legendContainer.scrollLeft / legendContainer.offsetWidth;
-            var newPage;
 
-            if (direction === 'left') {
-                newPage = Math.max(currentPage - 1, 0);
-            } else if (direction === 'right') {
-                newPage = Math.min(currentPage + 1, Math.ceil(resultsArray.length / 4) - 1);
-            }
-
-            legendContainer.scrollTo({
-                left: newPage * legendContainer.offsetWidth,
-                behavior: 'smooth'
-            });
-           // console.log("page index", Math.round(newPage));
-            highlightLegendDot(Math.round(newPage));
-
-        }
-
-        // Detect swipe gestures
-        var startX = 0;
-
-        document.addEventListener('touchstart', function (event) {
-            startX = event.touches[0].clientX;
-        });
-
-        document.addEventListener('touchend', function (event) {
-            var endX = event.changedTouches[0].clientX;
-            var deltaX = endX - startX;
-            var threshold = 50; // Adjust the threshold for swipe detection
-
-            if (Math.abs(deltaX) > threshold) {
-                if (deltaX > 0) {
-                    swipeLegend('left');
-                } else {
-                    swipeLegend('right');
-                }
-            }
-        });
-
-        // Mouse event listeners as fallback
-        document.addEventListener('mousedown', function (event) {
-            startX = event.clientX;
-            startY = event.clientY;
-        });
-
-        document.addEventListener('mouseup', function (event) {
-            var endX = event.clientX;
-            var deltaX = endX - startX;
-            var threshold = 50; // Adjust the threshold for swipe detection
-
-            if (Math.abs(deltaX) > threshold) {
-                if (deltaX > 0) {
-                    swipeLegend('left');
-                } else {
-                    swipeLegend('right');
-                }
-            }
-        });
         // Render legend initially
         renderLegend();
-        // Highlight the first dot initially    
-        highlightLegendDot(0);
-
-
-        function highlightLegendDot(pageIndex) {
-            var legendDots = document.querySelectorAll('.legend-dot');
-            for (var i = 0; i < legendDots.length; i++) {
-                legendDots[i].classList.remove('active');
-            }
-            legendDots[pageIndex].classList.add('active');
-        }
-
-        // Event listener for legend dot clicks
-        document.getElementById('legend-dots').addEventListener('click', function (event) {
-            if (event.target.classList.contains('legend-dot')) {
-                var pageIndex = parseInt(event.target.dataset.pageIndex);
-            //    console.log(pageIndex);
-                var legendContainer = document.getElementById('legend-container');
-                legendContainer.scrollTo({
-                    left: pageIndex * legendContainer.offsetWidth,
-                    behavior: 'smooth'
-                });
-                highlightLegendDot(pageIndex);
-            }
-        });
-
-        // Event listener for legend container scroll
-        document.getElementById('legend-container').addEventListener('scroll', function () {
-            var pageIndex = Math.round(this.scrollLeft / this.offsetWidth);
-        });
 
 
 

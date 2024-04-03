@@ -118,21 +118,3 @@ body {
   border: none;
 }
 
-#legend-dots {
-  display: flex;
-  justify-content: center;
-  margin-top: 10px;
-}
-
-.legend-dot {
-  width: 10px;
-  height: 10px;
-  background-color: gray;
-  border-radius: 50%;
-  margin: 0 5px;
-  cursor: pointer;
-}
-
-.legend-dot.active {
-  background-color: black;
-}
