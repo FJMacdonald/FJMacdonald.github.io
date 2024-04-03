@@ -1,15 +1,73 @@
 const errorResult = 99999;
+var brushingEnabled = true;
+
 
 // Draws the chart
 function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
-    console.log(athletesArray);
-    console.log(leadersArray);
-    console.log(spiderChartArray);
+        // console.log(athletesArray);
+    // console.log(leadersArray);
+    // console.log(spiderChartArray);
 
+    
     if (athletesArray.length == 0) {
         return
     }
+
+    // Check if the device supports touch events
+    function isTouchDevice() {
+        return 'ontouchstart' in window || navigator.maxTouchPoints;
+    }
+
+    // Function to display tooltip
+    function displayTooltip(element, message) {
+        // Create a tooltip element
+        const tooltip = d3.select("body")
+            .append("div")
+            .attr("class", "tooltip")
+            .style("opacity", 0)
+            .html(message);
+
+        // Show tooltip on hover
+        element.on("mouseover", function () {
+            tooltip.transition()
+                .duration(200)
+                .style("opacity", .9);
+        })
+        .on("mousemove", function (event) {
+            tooltip.style("left", (event.pageX + 10) + "px")
+                .style("top", (event.pageY - 30) + "px");
+        })
+        .on("mouseout", function () {
+            tooltip.transition()
+                .duration(500)
+                .style("opacity", 0);
+        });
+    }
+
+    // Check if it's a touch device
+    if (isTouchDevice()) {
+        const zoomButton = d3.select("#zoomButton");
+        // Display zoom button with tooltip
+        zoomButton.style("display", "inline-block");
+        // Add a click event listener to the zoom button
+        zoomButton.on("click", function() {
+            console.log("zoom on");
+            toggleBrushing();
+        });
+
+        // Display tooltip explaining zoom button's use
+        displayTooltip(zoomButton, "Tap this button to enable zooming mode");
+    }
+    var resetButton = d3.select("#resetButton");
+    // Add a click event listener to the reset button
+    resetButton.on("click", resetChart); 
+    
+
+
+    // Display tooltip explaining zoom button's use
+    displayTooltip(resetButton, "click this button to return to unzoomed chart");
+
     const colorPalette = [
         "#FF5733", // Red
         "#0074D9", // Cerulean
@@ -88,9 +146,6 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
     //             }
 
 
-    document.getElementById('resetButton').style.display = 'inline-block';
-    // Add a click event listener to the reset button
-    document.getElementById("resetButton").addEventListener("click", resetChart);
 
 
 
@@ -110,6 +165,10 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
         // Reset the brush to its initial position
         svg.select(".brush").call(yBrush.move, null);
+
+        // Show reset button
+        d3.select("#resetButton").style("display", "none");
+        console.log("show reset");
     }
 
 
@@ -171,7 +230,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
             values: values,
         });
     }
-    console.log("resultsArray", resultsArray);
+   // console.log("resultsArray", resultsArray);
 
     //This function takes an input time in seconds, calculates the minutes and remaining 
     //seconds, and formats them as "minutes:seconds". It also ensures that single-digit 
@@ -189,8 +248,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
     nRects = athletesArray.length
     const clientWidth = window.innerWidth;
     const clientHeight = window.innerHeight;
-    const nColumns = Math.trunc(clientWidth / 200);
-    const nRows = Math.trunc(nRects / nColumns);
+
     // Define the size and spacing of the rectangles
     const size = 25;
     const bottom = 10;
@@ -233,8 +291,6 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         .domain([0, raceLength]) //assuming a 90min race
         .range([0, width]); //leaving space for ledgend
 
-    // Extract y-coordinates from data
-    // const yValues = athletesArray.flatMap(athlete => d.values.flat());//.map(point => point.y));
 
     // Define the initial yScale
     const yScale = d3.scaleLinear()
@@ -263,23 +319,50 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         .text("Time Behind Leader");
 
 
+    // Function to toggle brushing behavior
+    function toggleBrushing() {
+        if (isTouchDevice()) {
+            brushingEnabled = !brushingEnabled;
+        }
+        
+        // If brushing is enabled, call the brush behavior on the SVG
+        if (brushingEnabled) {
+            area.call(yBrush);
+        } else {
+            // If brushing is disabled, remove the brush behavior from the SVG
+            area.on(".brush", null);
+            console.log("calling yBrush.move", yBrush);
+            // Reset the brush to its initial position
+            svg.select(".brush").call(yBrush.clear);
+        }
+    }
+
 
     // Add brushing for y-axis
     var yBrush = d3.brushY()
         .extent([[0, 0], [width, height]])
         .on("end", yBrushed);
+  
+    
 
     // Create the area variable: where both the area and the brush take place
     var area = svg.append('g')
-        .attr("class", "brush")
-        .call(yBrush);
+        .attr("class", "brush");
+
+
+
+
 
     function yBrushed(event) {
         if (!event.selection) return; // Ignore empty selections
+        if (brushingEnabled) {
+            var yBrushExtent = event.selection.map(yScale.invert);
+            zoomInOnChart(yBrushExtent);
+            toggleBrushing();
+        }          
+    }
 
-        // Get the brushed extent
-        var yBrushExtent = event.selection.map(yScale.invert);
-
+    function zoomInOnChart(yBrushExtent){
         // Update yScale domain
         yScale.domain(yBrushExtent);
 
@@ -298,55 +381,18 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
         // Reset the brush to its initial position
         svg.select(".brush").call(yBrush.move, null);
-            
+
+        // Hide reset button
+        d3.select("#resetButton").style("display", "inline-block");
     }
+
     // Handle touch events
-    // svg.on("touchstart", yBrushed)
-    //     .on("touchmove", yBrushed)
-    //     .on("touchend", yBrushed);
-    // Define brush function
-    function brushWithTwoFingers() {
-        const touchPoints = d3.touches(svg.node()).length;
-        if (touchPoints === 2) {
-            // Invoke the brush function
-            yBrush.move(svg.select(".brush"), null);
-        }
-    }
+    svg.on("touchstart", yBrushed)
+        .on("touchmove", yBrushed)
+        .on("touchend", yBrushed);
 
 
-        // Function to handle touch start event
-        function handleTouchStart(event, d) {
-            // Highlight the line or perform any action you want
-            d3.select(this).attr("stroke-width", 4);
-            // You can also display additional information
-            // or trigger any other action based on the touched line
-        }
 
-        // Function to handle touch end event
-        function handleTouchEnd(event, d) {
-            // Remove the highlighting or revert back to original state
-            d3.select(this).attr("stroke-width", 2);
-            // You can hide the additional information displayed during touch start
-        }
-
-        // Apply touch event listeners to the lines
-        svg.selectAll(".line")
-            .on("touchstart", handleTouchStart)
-            .on("touchend", handleTouchEnd);
-
-    // Apply touch event listeners for brush and zoom
-    // svg.on("touchstart", function() {
-    //         d3.event.preventDefault();
-    //         brushWithTwoFingers(); // Check for brush action with two fingers
-    //     })
-    //     .on("touchmove", function() {
-    //         d3.event.preventDefault();
-    //         brushWithTwoFingers(); // Check for brush action with two fingers
-    //     })
-    //     .on("touchend", function() {
-    //         d3.event.preventDefault();
-    //         brushWithTwoFingers(); // Check for brush action with two fingers
-    //     });
 
     function updateLinesAndCircles() {
 
@@ -444,35 +490,32 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
     updateChart(10 * 360);
     updateYAxis();
+    toggleBrushing();
 
 
     function updateChart(max_time_lag) {
 
         function estimateColumnWidth() {
             // Initialize variable to store the longest name
-            var longestName = "";
+            var longestName = "Schummelfelder 🇬🇧";
 
-            // Iterate through the resultsArray to find the longest name
-            resultsArray.forEach(function (athlete) {
-                if (athlete.athleteName.length > longestName.length) {
-                    longestName = athlete.athleteName;
-                }
-            });
             // Get the computed style of an element with class 'label'
             var labelElement = document.querySelector('.label');
             var computedStyle = window.getComputedStyle(labelElement);
 
             // Extract the font size from the computed style
             var fontSize = computedStyle.getPropertyValue('font-size');
-
+            
             // Create a temporary span element to measure the width of the name
             var span = document.createElement('span');
             span.textContent = longestName;
-            span.style.fontSize = fontSize;
+            span.style.fontSize = fontSize;//        s'2.0vw'; 
+            console.log("fontsize", fontSize, span.style.fontSize);
             span.style.visibility = 'hidden';
             document.body.appendChild(span);
             // Get the width of the span element
             var width = span.offsetWidth;
+            console.log("width", width);
             // Remove the temporary span element
             document.body.removeChild(span);
             return width;
@@ -586,8 +629,6 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
             // Calculate startIndex and endIndex based on pageIndex and athletesPerPage
             var startIndex = pageIndex * athletesPerPage;
             var endIndex = Math.min(startIndex + athletesPerPage, resultsArray.length);
-            console.log("startIndex", startIndex);
-            console.log("endIndex", endIndex);
 
             var legendPage = d3.create('li');
             for (var i = startIndex; i < endIndex; i++) {
@@ -605,17 +646,13 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
             // Get the legend container and the legend item width
             var legendContainer = document.getElementById('legend-container');
-
+            const containerStyle = window.getComputedStyle(legendContainer);
             const containerWidth = legendContainer.offsetWidth;
+
             const columnWidth = estimateColumnWidth();
-            console.log("containerWidth", containerWidth);
-            console.log("columnWidth", columnWidth);
-            const athletesPerColumn = 4; // Assuming 4 athletes per column
-            const maxAthletesOnPage = Math.floor(containerWidth / columnWidth);
-            const athletesOnPage = maxAthletesOnPage * athletesPerColumn;
-            console.log("athletesOnPage", athletesOnPage);
+            const columns = Math.floor(containerWidth / columnWidth);
+            const athletesOnPage = columns*4;
             var numDots = Math.ceil(resultsArray.length / athletesOnPage);
-            console.log("numDots", numDots);
             // Render legend dots
             for (var i = 0; i < numDots; i++) {
                 var dot = legendDotsContainer.append('span')
@@ -658,7 +695,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
                 left: newPage * legendContainer.offsetWidth,
                 behavior: 'smooth'
             });
-            console.log("page index", Math.round(newPage));
+           // console.log("page index", Math.round(newPage));
             highlightLegendDot(Math.round(newPage));
 
         }
@@ -721,7 +758,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         document.getElementById('legend-dots').addEventListener('click', function (event) {
             if (event.target.classList.contains('legend-dot')) {
                 var pageIndex = parseInt(event.target.dataset.pageIndex);
-                console.log(pageIndex);
+            //    console.log(pageIndex);
                 var legendContainer = document.getElementById('legend-container');
                 legendContainer.scrollTo({
                     left: pageIndex * legendContainer.offsetWidth,
