@@ -1,16 +1,15 @@
 
 
-function drawSpiderChart(spiderChartArray, athleteIndexArray, colorPalette) {
+function drawSpiderChart(selectedAthletes, athleteIndexArray, colorPalette) {
     
+    console.log(selectedAthletes);
+    console.log(athleteIndexArray);
+    console.log(colorPalette);
+
     let chartTitleDiv = document.getElementById("spiderchart_title");
 
     // Update the inner HTML of the div with the new title
     chartTitleDiv.innerHTML = "<h3> Spider Chart </h3>";
-
-    var selectedAthletes = [];
-    for (let i = 0; i < athleteIndexArray.length; i++) {
-        selectedAthletes.push(spiderChartArray[athleteIndexArray[i]]);
-    }
 
     // set the dimensions and margins of the graph
     var margin = { top: 10, right: 10, bottom: 0, left: 10 };

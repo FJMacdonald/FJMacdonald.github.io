@@ -59,19 +59,17 @@
         }
 
         // Access the data passed as parameters
-        const athletesArray = JSON.parse(localStorage.getItem("data1"));
-        const leadersArray = JSON.parse(localStorage.getItem("data2"));
-        const spiderChartArray = JSON.parse(localStorage.getItem("data3"));
-        const problemString = localStorage.getItem("strValue");
-        const title = localStorage.getItem("strValue2");
+        const athletesArray = JSON.parse(localStorage.getItem("athletesArray"));
+        const leadersArray = JSON.parse(localStorage.getItem("leadersArray"));
+        const spiderChartArray = JSON.parse(localStorage.getItem("spiderChartArray"));
+        const problemString = localStorage.getItem("problemString");
+        const title = localStorage.getItem("fileTitle");
 
 
         const chartTitle = document.getElementById('chart_title');
         chartTitle.innerHTML = title;
         chartTitle.style = "font-size: 3.2vw";
         chartTitle.style.textAlign = "center";
-
-        console.log("prob", problemString);
 
         if (problemString){
             document.getElementById('issueButton').style.display = 'inline-block';

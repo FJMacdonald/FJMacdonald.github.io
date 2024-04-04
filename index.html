@@ -454,14 +454,11 @@ By following these steps, you can create a free website that allows users to upl
              }
              console.log(problemString);
              // Storing data in local storage
-             localStorage.setItem("data1", JSON.stringify(athletesArray));
-             localStorage.setItem("data2", JSON.stringify(leadersArray));
-             localStorage.setItem("strValue", problemString);
- 
-                       
-             const filetitle = titlename.replace(/Results for |.csv/g, ""); // Extract title from filename
- 
-             localStorage.setItem("strValue2", filetitle);
+             localStorage.setItem("athletesArray", JSON.stringify(athletesArray));
+             localStorage.setItem("leadersArray", JSON.stringify(leadersArray));
+             localStorage.setItem("problemString", problemString);            
+             const fileTitle = titlename.replace(/Results for |.csv/g, ""); // Extract title from filename
+             localStorage.setItem("fileTitle", fileTitle);
  
              // Redirect with parameters as query parameters
              window.location.href = "charts.html";

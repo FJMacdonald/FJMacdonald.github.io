@@ -5,9 +5,9 @@ var brushingEnabled = true;
 // Draws the chart
 function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
-    // console.log(athletesArray);
-    // console.log(leadersArray);
-    // console.log(spiderChartArray);
+    console.log(athletesArray);
+    console.log(leadersArray);
+    console.log(spiderChartArray);
 
 
     if (athletesArray.length == 0) {
@@ -593,8 +593,12 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
                             .style("opacity", lineOpacity)
                             .attr("r", circleRadius);
                     });
-
-                    drawSpiderChart(spiderChartArray, athleteIndexArray, colorPalette);
+                    //prepare array for spiderchart
+                    var selectedAthletes = [];
+                    for (let i = 0; i < athleteIndexArray.length; i++) {
+                        selectedAthletes.push(spiderChartArray[athleteIndexArray[i]]);
+                    }
+                    drawSpiderChart(selectedAthletes, athleteIndexArray, colorPalette);
                 });
 
             const nameParts = resultsArray[index].athleteName.split(" ");
@@ -628,7 +632,7 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
                 .style('float', 'left') // Right-align the text
                 .style('text-align', 'left') // Align the text to the right
                 .attr("class", "label")
-                .text(nameParts.pop() + resultsArray[index].country);//lastname + flag
+                .text(nameParts.pop() + resultsArray[index].country + resultsArray[index].status);
         }
 
         function renderLegendPage(pageIndex) {
