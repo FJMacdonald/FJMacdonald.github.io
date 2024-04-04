@@ -17,7 +17,7 @@ function drawSpiderChart(selectedAthletes, athleteIndexArray, colorPalette) {
     var height = 400 - margin.top - margin.bottom;
     if (width < 500)
         margin.bottom = 130;
-    // append the svg object to the body of the page
+    
     d3.select("#spider_chart").selectAll('*').remove();
     var spider_svg = d3.select("#spider_chart")
         .append("svg")

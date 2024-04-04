@@ -5,9 +5,10 @@ var brushingEnabled = true;
 // Draws the chart
 function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
-    console.log(athletesArray);
-    console.log(leadersArray);
-    console.log(spiderChartArray);
+    // console.log(athletesArray);
+    // console.log(leadersArray);
+    // console.log(spiderChartArray);
+    
 
 
     if (athletesArray.length == 0) {
@@ -152,7 +153,44 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
     //                 return '#' + color.slice(1).match(/.{2}/g).map(channel => Math.floor(parseInt(channel, 16) * factor).toString(16).padStart(2, '0')).join('');
     //             }
 
+    calculateRankings();
+    // Function to calculate rankings for each discipline
+    function calculateRankings() {
+        // Filter out athletes with status other than finished = ""
+        const finishedAthletes = athletesArray.filter(athlete => athlete.status === "");
 
+        // Sort athletes by discipline
+        const sortedBySwim = finishedAthletes.slice().sort((a, b) => a['swim'] - b['swim']);
+        const sortedByT1 = finishedAthletes.slice().sort((a, b) => a['t1'] - b['t1']);
+        const sortedByBike = finishedAthletes.slice().sort((a, b) => a['bike'] - b['bike']);
+        const sortedByT2 = finishedAthletes.slice().sort((a, b) => a['t2'] - b['t2']);
+        const sortedByRun = finishedAthletes.slice().sort((a, b) => a['run'] - b['run']);
+        // Calculate ranking for each athlete
+        finishedAthletes.forEach((athlete) => {
+            // Find athlete rank for swim
+            const swimRank = athlete.swim === 0 ? finishedAthletes.length + 1 : sortedBySwim.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            // Find athlete rank for t1
+            const t1Rank = athlete.t1 === 0 ? finishedAthletes.length + 1 : sortedByT1.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            // Find athlete rank for bike
+            const bikeRank = athlete.bike === 0 ? finishedAthletes.length + 1 : sortedByBike.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            // Find athlete rank for t2
+            const t2Rank = athlete.t2 === 0 ? finishedAthletes.length + 1 : sortedByT2.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            // Find athlete rank for run
+            const runRank = athlete.run === 0 ? finishedAthletes.length + 1 : sortedByRun.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+     
+            // Add ranks to athlete object
+            athlete.swim_rank = swimRank;
+            athlete.t1_rank = t1Rank;
+            athlete.bike_rank = bikeRank;
+            athlete.t2_rank = t2Rank;
+            athlete.run_rank = runRank;
+            //console.log("athlete", athlete);
+        });
+        drawRankChart(athletesArray, colorPalette);
+     
+        // Return the updated athletesArray
+        return athletesArray;
+    }
 
 
 
