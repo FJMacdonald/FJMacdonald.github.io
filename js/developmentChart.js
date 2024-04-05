@@ -3,12 +3,14 @@ var brushingEnabled = true;
 
 
 // Draws the chart
-function drawChart(athletesArray, leadersArray, spiderChartArray) {
+function drawChart(athletesArray, max_time_lag, spiderChartArray) {
 
-    // console.log(athletesArray);
-    // console.log(leadersArray);
-    // console.log(spiderChartArray);
-    
+
+    let chartTitleDiv = document.getElementById("devchart_title");
+
+    // Update the inner HTML of the div with the new title
+    chartTitleDiv.innerHTML = "<h3> Race Development Chart </h3>";
+
 
 
     if (athletesArray.length == 0) {
@@ -68,83 +70,102 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
     // Display tooltip explaining zoom button's use
     displayTooltip(resetButton, "click this button to return to unzoomed chart");
-    
-//https://coolors.co/palettes/trending
-    const colorPalette = ["#FF204E",
-        "#A0153E",
-        "#5D0E41",
-        "#00224D",
-        "#5356FF",
-        "#378CE7",
-        "#67C6E3",
-        "#606c38", //olive
-        "#283618", //dark green
-        "#dda15e", //beige
-        "#bc6c25", //orange brown
-        "#cdb4db", //lilac
-        "#ffafcc", //pink
-        "#a2d2ff", //sky bllue
-        "#0077b6", //blue
-        "#00b4d8", //turquoise
-        "#7FDBFF", // Azure
-        "#ffb703", //light orange
-        "#fb8500", // dark orange
-        "#2a9d8f", // green blue
-        "#264653", // steel blue
-        "#84a59d", // grey green
-        "#f4a261", // peach
-        "#e76f51", // brick
-        "#8d99ae", // grey
-        "#ff006e", //  bright pink
-        "#8338ec", // purple
-        "#84a98c", // light olive
-        "#52796f", // darker olive
-        "#9d8189", //mauve
-        "#e5989b", // pinkish
-        "#ffb4a2", // orange pink
-        "#ffb4a2", // brown
-        "#03045e", // navy
-        "#023e8a", // blue
-        "#0077b6", // blue
-        "#0096c7", // blue
-        "#00b4d8", // blue
-        "#48cae4", // blue
-        "#4a4e69", // dark grey
-        "#9a8c98", // light grey
-        "#c9ada7", // beige
-        "#386641", // green
-        "#6a994e", // green
-        "#a7c957", // green
-        "#38b000", // green
-        "#70e000", // green
-        "#f72585", // mag
-        "#b5179e", // mag2
-        "#7209b7", // purp
-        "#3a0ca3", // purp
-        "#3f37c9", // purp
-        "#4361ee", // blue
-        "#4895ef", //  blue
-        "#4cc9f0", // blue
-        "#01FF70", // Lime
-        "#FF4136", // Scarlet
-        "#FFDC00", // Yellow
-        "#0074D9", // Cerulean
+
+    //https://coolors.co/palettes/trending
+    const colorPalette = [
+        "#094E62", // Turquoise Darker
+        "#1100BB", // Blue
+        "#221177", // Blue
+        "#4361ee", // Blue
+        "#416289", // Turquoise
+        // Reds dark->pale almost brown to pink
+        "#6B0000",
+        "#FE4D4D", // Red (Last)
+        "#DB0000",
+        "#FE8484",
+        // Orange brown->yellow-orange
+        "#A55200",
+        "#DB6D00",
+        "#FE9227",
+        // Yellow
+        "#FFBA00",
+        "#FFD800",
+        // Green
+        "#11772D",
+        "#30AD23",
+        "#3ED715",
+        "#75DB1B",
+        "#05E177",
+        // Purple
+        "#430064",
+        "#7300AB",
+        "#AE1AF7",
+        "#D37AFF",
+        // Pink
+        "#AF005F",
+        "#F60B8A",
+        // Brown
+        "#662800",
+        "#AB6634",
+        "#DE9967",
+        // Grey
+        "#363636",
+        "#9C9C9C",
+        "#BEBEBE",
+        //blue
+        "#48cae4", // Blue
+        "#5588EE", // Blue
+        "#0077b6", // Blue2
+        "#00b4d8", // Turquoise
+        "#2AA1B7", // Turquoise
+        "#0033EE", // Blue (Last) 
+        // reds
+        "#8B0000", // DarkRed
+        "#FF0000", // Red
+        "#FF6347", // Tomato
+        "#FF4500", // OrangeRed
+        //olive green
+        "#283618", // Dark Olive Green
+        "#606c38", // Olive Green
+        "#84a98c", // Light Olive Green
+        "#a7c957", // Pale Olive Green
+        //pink
+        "#FFC0CB", // Pink
+        "#FF69B4", // HotPink
+        "#FF1493", // DeepPink
+        //blue
+        "#48cae4", // Blue
+        "#486d83", // Teal
+        "#5356FF", // RoyalBlue
+        "#5588EE", // Blue
         "#FFD700", // Gold
-        "#AAAAAA", // Grey
-        "#2ECC40", // Green
-        "#7FDBFF", // Azure
-        "#F012BE", // Magenta
-        "#111111", // Black
-        "#B10DC9", // Electric Purple
-        "#01FF70", // Lime
-        "#FF6B81", // Blush
-        "#FFDC00", // Yellow
-        "#FF4136", // Scarlet
-        "#3D9970", // Emerald
-        "#0074D9", // Cerulean
-        "#FF851B", // Orange
-        "#AAAAAA", // Grey
-        "#FF5733"  // Red
+        "#FFA500", // Orange
+        "#FF8C00", // DarkOrange
+        "#FF4500", // OrangeRed
+        //blue
+        "#0096c7", // Blue4
+        "#0077b6", // Blue2
+        "#a2d2ff", // SkyBlue2
+        "#4895ef", // Blue
+        "#00b4d8", // Turquoise
+        "#264653", // SteelBlue (Second Last)
+        //grey green
+        "#556B2F", // DarkOliveGreen
+        "#8FBC8F", // DarkSeaGreen
+        "#9ACD32", // YellowGreen
+        "#808080", // Gray
+        //blue
+        "#094E62", // Turquoise (Darker)
+        "#0E82B0", // Turquoise
+        "#1100BB", // Blue
+        "#2a9d8f", // GreenBlue
+        "#4361ee", // Blue
+        "#4422EE", // Blue
+        //yellow green 
+        "#556B2F", // DarkOliveGreen
+        "#6B8E23", // OliveDrab
+        "#ADFF2F", // GreenYellow
+        "#9ACD32", // YellowGreen
     ];
     // ].map(color => darken(color));
 
@@ -155,39 +176,49 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
     calculateRankings();
     // Function to calculate rankings for each discipline
-    function calculateRankings() {
-        // Filter out athletes with status other than finished = ""
-        const finishedAthletes = athletesArray.filter(athlete => athlete.status === "");
 
+    function calculateRankings() {
+        const nonfinisherAthletes = athletesArray.filter(athlete => athlete.status != "");
+        console.log("non finishers", nonfinisherAthletes);
+
+        // Filter out athletes with status other than finished = ""
+        var finishedAthletes = athletesArray.filter(athlete => athlete.status === "");
+        var nFinishedAthletes = finishedAthletes.length + 1;
         // Sort athletes by discipline
-        const sortedBySwim = finishedAthletes.slice().sort((a, b) => a['swim'] - b['swim']);
-        const sortedByT1 = finishedAthletes.slice().sort((a, b) => a['t1'] - b['t1']);
-        const sortedByBike = finishedAthletes.slice().sort((a, b) => a['bike'] - b['bike']);
-        const sortedByT2 = finishedAthletes.slice().sort((a, b) => a['t2'] - b['t2']);
-        const sortedByRun = finishedAthletes.slice().sort((a, b) => a['run'] - b['run']);
+        const sortedBySwim = athletesArray.slice().sort((a, b) => a['swim'] - b['swim']);
+        const sortedByT1 = athletesArray.slice().sort((a, b) => a['t1'] - b['t1']);
+        const sortedByBike = athletesArray.slice().sort((a, b) => a['bike'] - b['bike']);
+        const sortedByT2 = athletesArray.slice().sort((a, b) => a['t2'] - b['t2']);
+        const sortedByRun = athletesArray.slice().sort((a, b) => a['run'] - b['run']);
         // Calculate ranking for each athlete
-        finishedAthletes.forEach((athlete) => {
+        athletesArray.forEach((athlete) => {
             // Find athlete rank for swim
-            const swimRank = athlete.swim === 0 ? finishedAthletes.length + 1 : sortedBySwim.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            const swimRank = athlete.swim === 0 ? athletesArray.length + 1 : sortedBySwim.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
             // Find athlete rank for t1
-            const t1Rank = athlete.t1 === 0 ? finishedAthletes.length + 1 : sortedByT1.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            const t1Rank = athlete.t1 === 0 ? athletesArray.length + 1 : sortedByT1.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
             // Find athlete rank for bike
-            const bikeRank = athlete.bike === 0 ? finishedAthletes.length + 1 : sortedByBike.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            const bikeRank = athlete.bike === 0 ? athletesArray.length + 1 : sortedByBike.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
             // Find athlete rank for t2
-            const t2Rank = athlete.t2 === 0 ? finishedAthletes.length + 1 : sortedByT2.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            const t2Rank = athlete.t2 === 0 ? athletesArray.length + 1 : sortedByT2.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
             // Find athlete rank for run
-            const runRank = athlete.run === 0 ? finishedAthletes.length + 1 : sortedByRun.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
-     
+            const runRank = athlete.run === 0 ? athletesArray.length + 1 : sortedByRun.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
+            const finishRank = parseInt(athlete.position);
             // Add ranks to athlete object
             athlete.swim_rank = swimRank;
             athlete.t1_rank = t1Rank;
             athlete.bike_rank = bikeRank;
             athlete.t2_rank = t2Rank;
             athlete.run_rank = runRank;
-            //console.log("athlete", athlete);
+            if (athlete.status === ""){
+                athlete.finish_rank = finishRank;
+             } else {
+                athlete.finish_rank = nFinishedAthletes;
+                nFinishedAthletes++;
+             }
+
         });
         drawRankChart(athletesArray, colorPalette);
-     
+
         // Return the updated athletesArray
         return athletesArray;
     }
@@ -220,72 +251,12 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
 
     const duration = 300; //To calibrate all races to proportions of swim=10, t=2, bike=30, run=20
     const raceLength = 70;
-    var max_time_lag = 0;
 
-    const resultsArray = [];
+
     var athleteIndexArray = [];
-    for (let i = 0; i < athletesArray.length; i++) {
-        const runDiff = athletesArray[i].run - leadersArray[4];
-
-        if (runDiff > max_time_lag) {
-            max_time_lag = runDiff;
-        }
-        //check for lapped out or dnf
-        if (athletesArray[i].status != "") {
-            if (athletesArray[i].swim < 1.0) {
-                athletesArray[i].swim = 0;
-            }
-            else if (athletesArray[i].t1 < 1.0) {
-                athletesArray[i].t1 = errorResult;
-                athletesArray[i].bike = errorResult;
-                athletesArray[i].t2 = errorResult;
-                athletesArray[i].run = errorResult;
-            }
-            else if (athletesArray[i].bike < 1.0) {
-                athletesArray[i].bike = errorResult;
-                athletesArray[i].t2 = errorResult;
-                athletesArray[i].run = errorResult;
-            }
-            else if (athletesArray[i].t2 < 1.0) {
-                athletesArray[i].t2 = errorResult;
-                athletesArray[i].run = errorResult;
-            }
-            else if (athletesArray[i].run < 1.0) {
-                athletesArray[i].run = errorResult;
-            }
-        }
-        var values = [];
-        if (athletesArray[i].status == "DNS") {
-            values = [{ "x": 0, "y": 0, "diff": "" },
-            { "x": 0, "y": 0, "diff": "" }, { "x": 0, "y": 0, "diff": "" },
-            { "x": 0, "y": 0, "diff": "" }, { "x": 0, "y": 0, "diff": "" }];
-        } else {
-            values = [{ "x": 0, "y": 0, "diff": convertToMinutes(0) },
-            { "x": 10, "y": leadersArray[0] - athletesArray[i].swim, "diff": convertToMinutes(athletesArray[i].swim - leadersArray[0]) },
-            { "x": 12, "y": leadersArray[1] - athletesArray[i].t1, "diff": convertToMinutes(athletesArray[i].t1 - leadersArray[1]) },
-            { "x": 42, "y": leadersArray[2] - athletesArray[i].bike, "diff": convertToMinutes(athletesArray[i].bike - leadersArray[2]) },
-            { "x": 44, "y": leadersArray[3] - athletesArray[i].t2, "diff": convertToMinutes(athletesArray[i].t2 - leadersArray[3]) },
-            { "x": 64, "y": leadersArray[4] - athletesArray[i].run, "diff": convertToMinutes(athletesArray[i].run - leadersArray[4]) }];
-        }
-        resultsArray.push({
-            athleteName: athletesArray[i].athleteName,
-            position: athletesArray[i].position,
-            status: athletesArray[i].status,
-            country: getCountryFlagEmoji(athletesArray[i].country),
-            values: values,
-        });
-    }
+    
     // console.log("resultsArray", resultsArray);
 
-    //This function takes an input time in seconds, calculates the minutes and remaining 
-    //seconds, and formats them as "minutes:seconds". It also ensures that single-digit 
-    //seconds are padded with a leading zero.
-    function convertToMinutes(timeInSeconds) {
-        const minutes = Math.floor(timeInSeconds / 60);
-        const seconds = Math.floor(timeInSeconds % 60);
-        const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-        return formattedTime;
-    }
 
 
 
@@ -712,50 +683,66 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
         // Render legend initially
         renderLegend();
 
-
-
-        //Draw path
-        svg.selectAll("path")
+        // Grouping elements for each athlete
+        const athleteGroups = svg.selectAll(".athlete-group")
             .data(resultsArray)
-            .join("path")
-            .attr("class", "line")
+            .enter()
+            .append("g")
+            .attr("class", "athlete-group");
+
+
+        // Draw path for each athlete
+        athleteGroups.append("path")
+            .attr("class", "line athlete-line")
+            .attr("id", (d, i) => i)
             .attr("fill", "none")
-            .attr("stroke", function (d, i) { return colorPalette[i]; })
+            .attr("stroke", (d, i) => colorPalette[i])
             .attr("stroke-width", lineStroke)
-            .attr("d", function (d) { // Generate path 'd' attribute based on coordinates
-                return d3.line()
-                    .x(function (d) { return xScale(d.x); }) // Access x coordinate
-                    .y(function (d) { return yScale(d.y); }) // Access y coordinate
-                    .curve(d3.curveLinear) // Use linear curve
-                    (d.values); // Pass coordinates array
-            })
+            .attr("d", d => d3.line()
+                .x(coord => xScale(coord.x))
+                .y(coord => yScale(coord.y))
+                .curve(d3.curveLinear)(d.values))
             .style('opacity', lineOpacity)
             .attr("clip-path", "url(#clip)")
             .on("mouseover", function (d, i) {
-                //remove any previous athlete name
-                svg.select(".line-text").remove();
+                var athleteLine = d3.select(this);
+                athleteLine.attr("stroke-width", 4)
+                    .style('opacity', 1.0);
+
+
                 // get the current mouse position 
                 const [mouseX, mouseY] = d3.pointer(event, this);
-                // Get the index of the current path
-                const index = resultsArray.indexOf(i);
-
                 svg.append("text")
                     .attr("class", "line-text label")
-                    .style("fill", colorPalette[index])
+                    //   .style("fill", colorPalette[index])
                     .text(i.athleteName)
                     .attr("x", mouseX)
                     .attr("y", mouseY);
+            })
+            .on("mouseout", function (d, i) {
+                const athleteLine = d3.select(this);
+                const athleteIndex = parseInt(athleteLine.attr("id"));
+
+                svg.select(".line-text").remove();
+
+
+
+
+                // Check if the athlete is selected
+                var isSelected = athleteIndexArray.includes(athleteIndex);
+                if (!isSelected) {
+                    athleteLine.attr("stroke-width", 1)
+                        .style('opacity', 0.5);
+                }
+
             });
-        //Draw circles at path coordinates
-        svg.selectAll("circle")
-            .data(resultsArray)
-            .enter()
-            .selectAll("circle")
+
+        // Draw circles for each athlete
+        athleteGroups.selectAll(".athlete-circle")
             .data((d, i) => d.values.map(coord => ({ athleteIndex: i, coordinate: coord })))
             .enter()
             .append("circle")
             .attr("class", "athlete-circle")
-            .attr("athlete", d => d.athleteName)
             .attr("r", circleRadius)
             .style("opacity", lineOpacity)
             .attr("fill", d => colorPalette[d.athleteIndex])
@@ -783,20 +770,20 @@ function drawChart(athletesArray, leadersArray, spiderChartArray) {
                 svg
                     .selectAll(".text").remove();
             });
-        //Label paths with athlete first names
-        svg.selectAll("text.line-name")
-            .data(resultsArray)
-            .enter()
-            .append("text")
-            .attr("class", "line-name label")
-            .style("fill", (d, i) => colorPalette[i]) // Color based on athlete index
-            .text(d => d.athleteName.split(' ')[0]) // Display athlete's name
-            .attr("text-anchor", "end") // Anchor text to the end of the path
-            .attr("x", width - 100)
-            .attr("y", d => yScale(d.values[d.values.length - 1].y)) // Y position based on the last y-coordinate
+
+        // Label paths with athlete first names
+        athleteGroups.append("text")
+            .attr("class", "line-name label athlete-name")
+            .style("fill", (d, i) => colorPalette[i])
+            .text(d => d.athleteName.split(' ')[0])
+            .attr("text-anchor", "end")
+            .attr("x", d => xScale(d.values[d.values.length - 1].x) + 5)
+            .attr("y", d => yScale(d.values[d.values.length - 1].y))
             .attr("clip-path", "url(#clip-labels)")
             .style("visibility", "hidden")
-            .attr("text-anchor", "left"); // for some reason still need to define this
+            .attr("text-anchor", "left");
+
+
 
 
         // Define clipping path for lines

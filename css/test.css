@@ -3,14 +3,14 @@
   text-align: center;
   color: black;
   font-size: 2.0vw;
-  font-family: 'Courier New';
+  font-family: 'Arial';
   text-anchor: left;
 }
 .label-small {
   text-align: center;
   color: black;
   font-size: 1.5vw;
-  font-family: 'Courier New';
+  font-family: 'Arial';
   text-anchor: left;
   letter-spacing: -1px;
 }
@@ -23,7 +23,7 @@ h4, h5, h6 {
 }
 body {
     /* background-color: rgb(221, 233, 238); */
-    font-family: 'Courier New'; 
+    font-family: 'Arial'; 
     font-size: 2.8vw;
 }
 .button {

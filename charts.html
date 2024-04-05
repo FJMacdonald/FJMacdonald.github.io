@@ -28,25 +28,26 @@
 
     <!-- Create a div where the graph will take place -->
     <div id="chart_title"></div>
-        
+    <div id="rank_chart" style="width: 100%;"></div>
     <!-- Reset button -->
+    <div id="devchart_title"></div>
     <button id="resetButton" class="button" style="display: none;">Reset</button>
     <!-- Reset button -->
     <button id="zoomButton" class="button" style="display: none;">Zoom</button>
     <!-- Issue button -->
     <button id="issueButton" class="button" style="display: none;" onclick="showPopup()">Data Problems</button>
-        
+
     <div id="development_chart"></div>
     <div id="legend-container">
         <ul id="legend-pages">
-          <!-- Legend pages will be dynamically populated here -->
+            <!-- Legend pages will be dynamically populated here -->
         </ul>
     </div>
     <div id="legend-dots"></div>
     <div id="spiderchart_title"></div>
     <div id="spider_chart" style="width: 100%;"></div>
-    <div id="rankchart_title"></div>
-    <div id="rank_chart" style="width: 100%;"></div>
+
+
     <script src="https://d3js.org/d3-color.v1.min.js"> </script>
     <script src="https://d3js.org/d3-interpolate.v1.min.js"> </script>
     <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"> </script>
@@ -69,12 +70,12 @@
 
 
         const chartTitle = document.getElementById('chart_title');
-        chartTitle.innerHTML = title;
-        chartTitle.style = "font-size: 3.2vw";
-        chartTitle.style.textAlign = "center";
+        chartTitle.innerHTML = "<h3>" + title + "</h3>";
+        // chartTitle.style = "font-size: 3.2vw";
+        // chartTitle.style.textAlign = "center";
 
 
-        if (problemString){
+        if (problemString) {
             document.getElementById('issueButton').style.display = 'inline-block';
             // Add a click event listener to the issues button
             document.getElementById("issueButton").addEventListener("click", showPopup);
@@ -93,9 +94,83 @@
             document.getElementById('issuePopup').style.display = 'none';
         }
 
+        //process the results
+        var max_time_lag = 0;
+        const resultsArray = [];
+
+    //This function takes an input time in seconds, calculates the minutes and remaining 
+    //seconds, and formats them as "minutes:seconds". It also ensures that single-digit 
+    //seconds are padded with a leading zero.
+    function convertToMinutes(timeInSeconds) {
+        if (timeInSeconds < 0) {
+            //error in results
+            return "--";
+        }
+        const minutes = Math.floor(timeInSeconds / 60);
+        const seconds = Math.floor(timeInSeconds % 60);
+        const formattedTime = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+        return formattedTime;
+    }
+        for (let i = 0; i < athletesArray.length; i++) {
+            const runDiff = athletesArray[i].run - leadersArray[4];
+
+            if (runDiff > max_time_lag) {
+                max_time_lag = runDiff;
+            }
+            //check for lapped out or dnf
+            if (athletesArray[i].status != "") {
+                if (athletesArray[i].swim < 1.0) {
+                    athletesArray[i].swim = errorResult;
+                    athletesArray[i].t1 = athletesArray[i].swim + errorResult;
+                    athletesArray[i].bike = athletesArray[i].t1 + errorResult;
+                    athletesArray[i].t2 = athletesArray[i].bike + errorResult;
+                    athletesArray[i].run = athletesArray[i].t2 + errorResult;                }
+                else if (athletesArray[i].t1 < 1.0) {
+                    athletesArray[i].t1 = athletesArray[i].swim + errorResult;
+                    athletesArray[i].bike = athletesArray[i].t1 + errorResult;
+                    athletesArray[i].t2 = athletesArray[i].bike + errorResult;
+                    athletesArray[i].run = athletesArray[i].t2 + errorResult;
+                }
+                else if (athletesArray[i].bike < 1.0) {
+                    athletesArray[i].bike = athletesArray[i].t1 + errorResult;
+                    athletesArray[i].t2 = athletesArray[i].bike + errorResult;
+                    athletesArray[i].run = athletesArray[i].t2 + errorResult;
+                }
+                else if (athletesArray[i].t2 < 1.0) {
+                    athletesArray[i].t2 = athletesArray[i].bike + errorResult;
+                    athletesArray[i].run = athletesArray[i].t2 + errorResult;
+                }
+                else if (athletesArray[i].run < 1.0) {
+                    athletesArray[i].run = athletesArray[i].t2 + errorResult;
+                }
+            }
+           // var values = [];
+            // if (athletesArray[i].status == "DNS") {
+            //     values = [{ "x": 0, "y": 0, "diff": "" },
+            //     { "x": 0, "y": 0, "diff": "" }, { "x": 0, "y": 0, "diff": "" },
+            //     { "x": 0, "y": 0, "diff": "" }, { "x": 0, "y": 0, "diff": "" }];
+            // } else {
+                const values = [{ "x": 0, "y": 0, "diff": convertToMinutes(0) },
+                { "x": 10, "y": leadersArray[0] - athletesArray[i].swim, "diff": convertToMinutes(athletesArray[i].swim - leadersArray[0]) },
+                { "x": 12, "y": leadersArray[1] - athletesArray[i].t1, "diff": convertToMinutes(athletesArray[i].t1 - leadersArray[1]) },
+                { "x": 42, "y": leadersArray[2] - athletesArray[i].bike, "diff": convertToMinutes(athletesArray[i].bike - leadersArray[2]) },
+                { "x": 44, "y": leadersArray[3] - athletesArray[i].t2, "diff": convertToMinutes(athletesArray[i].t2 - leadersArray[3]) },
+                { "x": 64, "y": leadersArray[4] - athletesArray[i].run, "diff": convertToMinutes(athletesArray[i].run - leadersArray[4]) }];
+           // }
+            resultsArray.push({
+                athleteName: athletesArray[i].athleteName,
+                position: athletesArray[i].position,
+                status: athletesArray[i].status,
+                country: getCountryFlagEmoji(athletesArray[i].country),
+                values: values,
+            });
+        }
         //draw the chart
-        drawChart(athletesArray, leadersArray, spiderChartArray);
+        console.log(resultsArray);
+        console.log(athletesArray);
+        drawChart(athletesArray, max_time_lag, spiderChartArray);
 
     </script>
 </body>
+
 </html>

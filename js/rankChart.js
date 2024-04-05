@@ -1,6 +1,4 @@
 function drawRankChart(athletesData, colorPalette) {
-    console.log("draw rank chart");
-    console.log(athletesData);
 
     // Define chart dimensions
     const margin = { top: 20, right: 30, bottom: 20, left: 10 };
@@ -10,10 +8,7 @@ function drawRankChart(athletesData, colorPalette) {
     //get the section lengths 
     const sectionLength = width / 8;
 
-    let chartTitleDiv = document.getElementById("rankchart_title");
 
-    // Update the inner HTML of the div with the new title
-    chartTitleDiv.innerHTML = "<h3> Rank Chart </h3>";
 
     d3.select("#rank_chart").selectAll('*').remove();
     var svg = d3.select("#rank_chart")
@@ -51,7 +46,7 @@ function drawRankChart(athletesData, colorPalette) {
         xScale(4),
         xScale(4.2),
         xScale(5.2),
-        xScale(5.8),
+        xScale(5.6),
     ];
     // Draw lines connecting swim, bike, run, and finish positions for each athlete
     const athleteLines = svg.selectAll('.athlete-line')
@@ -60,24 +55,22 @@ function drawRankChart(athletesData, colorPalette) {
         .append('path')
         .attr('class', 'athlete-line')
         .attr('d', d => {
-            if (d.status == '') {
-                const startX = sectionEnds[0];//start
-                const startY = yScale(d.swim_rank);
-                const swimX = sectionEnds[1];//swim
-                const swimY = yScale(d.swim_rank);
-                const t1X = sectionEnds[2];//t1
-                const t1Y = yScale(d.t1_rank);
-                const bikeX = sectionEnds[3];//bike
-                const bikeY = yScale(d.bike_rank);
-                const t2X = sectionEnds[4];//t2
-                const t2Y = yScale(d.t2_rank);
-                const runX = sectionEnds[5];//run
-                const runY = yScale(d.run_rank);
-                const finishX = sectionEnds[6];
-                const finishY = yScale(d.run_rank);
+            const startX = sectionEnds[0];//start
+            const startY = yScale(d.swim_rank);
+            const swimX = sectionEnds[1];//swim
+            const swimY = yScale(d.swim_rank);
+            const t1X = sectionEnds[2];//t1
+            const t1Y = yScale(d.t1_rank);
+            const bikeX = sectionEnds[3];//bike
+            const bikeY = yScale(d.bike_rank);
+            const t2X = sectionEnds[4];//t2
+            const t2Y = yScale(d.t2_rank);
+            const runX = sectionEnds[5];//run
+            const runY = yScale(d.run_rank);
+            const finishX = sectionEnds[6];
+            const finishY = yScale(d.finish_rank);
 
-                return `M${startX},${startY} L${swimX},${swimY} L${t1X},${t1Y} L${bikeX},${bikeY} L${t2X},${t2Y} L${runX},${runY} L${finishX},${finishY}`;
-            }
+            return `M${startX},${startY} L${swimX},${swimY} L${t1X},${t1Y} L${bikeX},${bikeY} L${t2X},${t2Y} L${runX},${runY} L${finishX},${finishY}`;
         })
         .attr('stroke', (d, i) => colorPalette[i])
         .attr('stroke-width', 2)
@@ -144,10 +137,10 @@ function drawRankChart(athletesData, colorPalette) {
         .append('text')
         .attr('class', 'label athlete-label')
         .attr('id', d => `athlete-label-${d.athleteName.replace(/\s/g, '')}`) // Add unique IDs to the labels    
-        .attr('x', xScale(5.8))
-        .attr('y', d => yScale(d.run_rank))
+        .attr('x', xScale(5.6))
+        .attr('y', d => yScale(d.finish_rank))
         .attr('dy', '0.35em')
-        .text(d => d.status != '' ? '' : d.athleteName)
+        .text(d => d.athleteName + " " + d.status)
         .attr('fill', (d, i) => colorPalette[i])
     // .style('font-size', '14px');
 
