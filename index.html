@@ -411,8 +411,14 @@ By following these steps, you can create a free website that allows users to upl
                      }
                      
                  }
+                 // some athelete have up to 4 names which looks such a mess
+                 const nameParts = name.split(" ");
+                 // Extract the first name
+                 const firstName = nameParts.shift();
+                 const lastName = nameParts.pop()
+ 
                  athletesArray.push({
-                     athleteName: name,
+                     athleteName: firstName + " " + lastName,
                      swim: swim,
                      t1: t1,
                      bike: bike,

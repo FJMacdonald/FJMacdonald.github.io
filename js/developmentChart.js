@@ -178,12 +178,6 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray) {
     // Function to calculate rankings for each discipline
 
     function calculateRankings() {
-        const nonfinisherAthletes = athletesArray.filter(athlete => athlete.status != "");
-        console.log("non finishers", nonfinisherAthletes);
-
-        // Filter out athletes with status other than finished = ""
-        var finishedAthletes = athletesArray.filter(athlete => athlete.status === "");
-        var nFinishedAthletes = finishedAthletes.length + 1;
         // Sort athletes by discipline
         const sortedBySwim = athletesArray.slice().sort((a, b) => a['swim'] - b['swim']);
         const sortedByT1 = athletesArray.slice().sort((a, b) => a['t1'] - b['t1']);
@@ -212,8 +206,7 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray) {
             if (athlete.status === ""){
                 athlete.finish_rank = finishRank;
              } else {
-                athlete.finish_rank = nFinishedAthletes;
-                nFinishedAthletes++;
+                athlete.finish_rank = runRank;
              }
 
         });
@@ -610,9 +603,9 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray) {
                     drawSpiderChart(selectedAthletes, athleteIndexArray, colorPalette);
                 });
 
-            const nameParts = resultsArray[index].athleteName.split(" ");
+            const nameParts = resultsArray[index].athleteName.split(" ")
             // Extract the first name
-            const firstName = nameParts.shift();
+            const firstName = nameParts[0];
 
             // Append the athlete name and country on two lines
             const placeSpan = listItem.append('span')

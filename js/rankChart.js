@@ -46,7 +46,7 @@ function drawRankChart(athletesData, colorPalette) {
         xScale(4),
         xScale(4.2),
         xScale(5.2),
-        xScale(5.6),
+        xScale(5.65),
     ];
     // Draw lines connecting swim, bike, run, and finish positions for each athlete
     const athleteLines = svg.selectAll('.athlete-line')
@@ -137,7 +137,7 @@ function drawRankChart(athletesData, colorPalette) {
         .append('text')
         .attr('class', 'label athlete-label')
         .attr('id', d => `athlete-label-${d.athleteName.replace(/\s/g, '')}`) // Add unique IDs to the labels    
-        .attr('x', xScale(5.6))
+        .attr('x', sectionEnds[6])
         .attr('y', d => yScale(d.finish_rank))
         .attr('dy', '0.35em')
         .text(d => d.athleteName + " " + d.status)

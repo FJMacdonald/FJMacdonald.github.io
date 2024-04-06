@@ -124,7 +124,9 @@
                     athletesArray[i].t1 = athletesArray[i].swim + errorResult;
                     athletesArray[i].bike = athletesArray[i].t1 + errorResult;
                     athletesArray[i].t2 = athletesArray[i].bike + errorResult;
-                    athletesArray[i].run = athletesArray[i].t2 + errorResult;                }
+                    athletesArray[i].run = athletesArray[i].t2 + errorResult;       
+                    athletesArray[i].status = "DNS"
+                }
                 else if (athletesArray[i].t1 < 1.0) {
                     athletesArray[i].t1 = athletesArray[i].swim + errorResult;
                     athletesArray[i].bike = athletesArray[i].t1 + errorResult;
@@ -144,19 +146,13 @@
                     athletesArray[i].run = athletesArray[i].t2 + errorResult;
                 }
             }
-           // var values = [];
-            // if (athletesArray[i].status == "DNS") {
-            //     values = [{ "x": 0, "y": 0, "diff": "" },
-            //     { "x": 0, "y": 0, "diff": "" }, { "x": 0, "y": 0, "diff": "" },
-            //     { "x": 0, "y": 0, "diff": "" }, { "x": 0, "y": 0, "diff": "" }];
-            // } else {
                 const values = [{ "x": 0, "y": 0, "diff": convertToMinutes(0) },
                 { "x": 10, "y": leadersArray[0] - athletesArray[i].swim, "diff": convertToMinutes(athletesArray[i].swim - leadersArray[0]) },
                 { "x": 12, "y": leadersArray[1] - athletesArray[i].t1, "diff": convertToMinutes(athletesArray[i].t1 - leadersArray[1]) },
                 { "x": 42, "y": leadersArray[2] - athletesArray[i].bike, "diff": convertToMinutes(athletesArray[i].bike - leadersArray[2]) },
                 { "x": 44, "y": leadersArray[3] - athletesArray[i].t2, "diff": convertToMinutes(athletesArray[i].t2 - leadersArray[3]) },
                 { "x": 64, "y": leadersArray[4] - athletesArray[i].run, "diff": convertToMinutes(athletesArray[i].run - leadersArray[4]) }];
-           // }
+           
             resultsArray.push({
                 athleteName: athletesArray[i].athleteName,
                 position: athletesArray[i].position,
