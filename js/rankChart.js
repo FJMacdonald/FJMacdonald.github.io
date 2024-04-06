@@ -74,26 +74,31 @@ function drawRankChart(athletesData, colorPalette) {
         })
         .attr('stroke', (d, i) => colorPalette[i])
         .attr('stroke-width', 2)
+        .attr('opacity', 0.7)
         .attr('fill', 'none');
 
     // Highlight athlete path on hover or tap
     athleteLines.on('mouseover', function (event, d) {
         d3.select(this).attr('stroke-width', 5);
+        d3.select(this).attr('opacity', 1);
         // Bold the associated athlete name label
         svg.select(`#athlete-label-${d.athleteName.replace(/\s/g, '')}`).style('font-weight', 'bold');
     })
         .on('mouseout', function (event, d) {
             d3.select(this).attr('stroke-width', 2);
+            d3.select(this).attr('opacity', 0.7);
             // Revert the associated athlete name label to normal
             svg.select(`#athlete-label-${d.athleteName.replace(/\s/g, '')}`).style('font-weight', 'normal');
         })
         .on('touchstart', function (event, d) {
             d3.select(this).attr('stroke-width', 5);
+            d3.select(this).attr('opacity', 1);
             // Bold the associated athlete name label
             svg.select(`#athlete-label-${d.athleteName.replace(/\s/g, '')}`).style('font-weight', 'bold');
         })
         .on('touchend', function (event, d) {
             d3.select(this).attr('stroke-width', 2);
+            d3.select(this).attr('opacity', 0.7);
             // Revert the associated athlete name label to normal
             svg.select(`#athlete-label-${d.athleteName.replace(/\s/g, '')}`).style('font-weight', 'normal');
         });

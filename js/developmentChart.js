@@ -205,6 +205,9 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray) {
             athlete.run_rank = runRank;
             if (athlete.status === ""){
                 athlete.finish_rank = finishRank;
+             } else if (athlete.status === "DSQ"){
+                const nonfinishers = athletesArray.filter(athlete => athlete.status != "");
+                athlete.finish_rank = athletesArray.length - nonfinishers.length + 1;
              } else {
                 athlete.finish_rank = runRank;
              }
