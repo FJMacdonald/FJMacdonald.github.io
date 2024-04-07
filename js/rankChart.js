@@ -3,12 +3,7 @@ function drawRankChart(athletesData, colorPalette) {
     // Define chart dimensions
     const margin = { top: 20, right: 30, bottom: 20, left: 10 };
     const width = window.innerWidth - margin.left - margin.right;
-    const height = 17 * athletesData.length;
-
-    //get the section lengths 
-    const sectionLength = width / 8;
-
-
+    const height = 14 * athletesData.length;
 
     d3.select("#rank_chart").selectAll('*').remove();
     var svg = d3.select("#rank_chart")
