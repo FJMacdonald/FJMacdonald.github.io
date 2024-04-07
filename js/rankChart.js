@@ -69,7 +69,7 @@ function drawRankChart(athletesData, colorPalette) {
         })
         .attr('stroke', (d, i) => colorPalette[i])
         .attr('stroke-width', 2)
-        .attr('opacity', 0.7)
+        .attr('opacity', 0.5)
         .attr('fill', 'none');
 
     // Highlight athlete path on hover or tap
@@ -81,7 +81,7 @@ function drawRankChart(athletesData, colorPalette) {
     })
         .on('mouseout', function (event, d) {
             d3.select(this).attr('stroke-width', 2);
-            d3.select(this).attr('opacity', 0.7);
+            d3.select(this).attr('opacity', 0.5);
             // Revert the associated athlete name label to normal
             svg.select(`#athlete-label-${d.athleteName.replace(/\s/g, '')}`).style('font-weight', 'normal');
         })
@@ -93,7 +93,7 @@ function drawRankChart(athletesData, colorPalette) {
         })
         .on('touchend', function (event, d) {
             d3.select(this).attr('stroke-width', 2);
-            d3.select(this).attr('opacity', 0.7);
+            d3.select(this).attr('opacity', 0.5);
             // Revert the associated athlete name label to normal
             svg.select(`#athlete-label-${d.athleteName.replace(/\s/g, '')}`).style('font-weight', 'normal');
         });
