@@ -1,6 +1,33 @@
-const errorResult = 99999;
+// const errorResult = 99999;
 var brushingEnabled = true;
 
+
+//rectangles in the legend (athletes + teams)
+///nRects = athletesArray.length
+const clientWidth = window.innerWidth;
+const clientHeight = window.innerHeight;
+
+// Define the size and spacing of the rectangles
+const size = 25;
+const bottom = 10;
+var lineOpacity = "0.5";
+var lineStroke = "1.0";
+
+var circleRadius = 3;
+const circleRadiusHover = 6;
+
+// set the dimensions and margins of the graph
+var margin = { top: 40, right: 10, bottom: bottom, left: clientWidth / 14 },
+    width = clientWidth - margin.left - margin.right,
+    height = 0.5 * clientHeight;
+// append the svg object to the body of the page
+svg = d3.select("#development_chart")
+    .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform",
+        "translate(" + margin.left + "," + margin.top + ")");
 
 // Draws the chart
 function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) {
@@ -17,62 +44,28 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
         return
     }
 
-    // Check if the device supports touch events
-    function isTouchDevice() {
-        return 'ontouchstart' in window || navigator.maxTouchPoints;
-    }
 
-    // Function to display tooltip
-    function displayTooltip(element, message) {
-        // Create a tooltip element
-        const tooltip = d3.select("body")
-            .append("div")
-            .attr("class", "tooltip")
-            .style("opacity", 0)
-            .html(message);
 
-        // Show tooltip on hover
-        element.on("mouseover", function () {
-            tooltip.transition()
-                .duration(200)
-                .style("opacity", .9);
-        })
-            .on("mousemove", function (event) {
-                tooltip.style("left", (event.pageX + 10) + "px")
-                    .style("top", (event.pageY - 30) + "px");
-            })
-            .on("mouseout", function () {
-                tooltip.transition()
-                    .duration(500)
-                    .style("opacity", 0);
-            });
-    }
 
-    // Check if it's a touch device
-    if (isTouchDevice()) {
-        const zoomButton = d3.select("#zoomButton");
-        // Display zoom button with tooltip
-        zoomButton.style("display", "inline-block");
-        // Add a click event listener to the zoom button
-        zoomButton.on("click", function () {
-            console.log("zoom on");
-            toggleBrushing();
-        });
-
-        // Display tooltip explaining zoom button's use
-        displayTooltip(zoomButton, "Tap this button to enable zooming mode");
-    }
     var resetButton = d3.select("#resetButton");
     // Add a click event listener to the reset button
     resetButton.on("click", resetChart);
 
+    var zoomInButton = d3.select("#zoomInButton");
+    // Add a click event listener to the zoom in button
+    zoomInButton.on("click", zoomInOnChart);
 
+    var zoomOutButton = d3.select("#zoomOutButton");
+    // Add a click event listener to the zoom out button
+    zoomOutButton.on("click", zoomOutOnChart);
 
-    // Display tooltip explaining zoom button's use
-    displayTooltip(resetButton, "click this button to return to unzoomed chart");
+    var panUpButton = d3.select("#panUpButton");
+    // Add a click event listener to the pan up button
+    panUpButton.on("click", panUpOnChart);
 
-
-
+    var panDownButton = d3.select("#panDownButton");
+    // Add a click event listener to the pan up button
+    panDownButton.on("click", panDownOnChart);
 
 
     // Function to reset the chart
@@ -89,53 +82,13 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
         //Update Y-axis
         updateYAxis();
 
-        // Reset the brush to its initial position
-        svg.select(".brush").call(yBrush.move, null);
-
-        // Show reset button
-        d3.select("#resetButton").style("display", "none");
-        console.log("show reset");
     }
-
-
 
     const duration = 300; //To calibrate all races to proportions of swim=10, t=2, bike=30, run=20
     const raceLength = 70;
 
 
     var athleteIndexArray = [];
-    
-    // console.log("resultsArray", resultsArray);
-
-
-
-
-    //rectangles in the legend (athletes + teams)
-    nRects = athletesArray.length
-    const clientWidth = window.innerWidth;
-    const clientHeight = window.innerHeight;
-
-    // Define the size and spacing of the rectangles
-    const size = 25;
-    const bottom = 10;
-    var lineOpacity = "0.5";
-    var lineStroke = "1.0";
-
-    var circleRadius = 3;
-    const circleRadiusHover = 6;
-
-    // set the dimensions and margins of the graph
-    var margin = { top: 40, right: 10, bottom: bottom, left: clientWidth / 14 },
-        width = clientWidth - margin.left - margin.right,
-        height = 0.5 * clientHeight;
-    // append the svg object to the body of the page
-    svg = d3.select("#development_chart")
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + margin.left + "," + margin.top + ")");
 
     // Create a rectangle for the frame
     var frame = svg.append("rect")
@@ -185,77 +138,72 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
         .text("Time Behind Leader");
 
 
-    // Function to toggle brushing behavior
-    function toggleBrushing() {
-        if (isTouchDevice()) {
-            brushingEnabled = !brushingEnabled;
-        }
+    // Set the zoom level to cover the desired range on the y-axis
+    function zoomInOnChart() {
+        // Calculate the new y-axis domain to zoom in by 50%
+        var newDomain = yScale.domain().map(value => value * 0.5);
 
-        // If brushing is enabled, call the brush behavior on the SVG
-        if (brushingEnabled) {
-            area.call(yBrush);
-        } else {
-            // If brushing is disabled, remove the brush behavior from the SVG
-            area.on(".brush", null);
-            console.log("calling yBrush.move", yBrush);
-            // Reset the brush to its initial position
-            svg.select(".brush").call(yBrush.clear);
-        }
-    }
-
-
-    // Add brushing for y-axis
-    var yBrush = d3.brushY()
-        .extent([[0, 0], [width, height]])
-        .on("end", yBrushed);
-
-
-
-    // Create the area variable: where both the area and the brush take place
-    var area = svg.append('g')
-        .attr("class", "brush");
-
-
-
-
-
-    function yBrushed(event) {
-        if (!event.selection) return; // Ignore empty selections
-        if (brushingEnabled) {
-            var yBrushExtent = event.selection.map(yScale.invert);
-            zoomInOnChart(yBrushExtent);
-            toggleBrushing();
-        }
-    }
-
-    function zoomInOnChart(yBrushExtent) {
-        // Update yScale domain
-        yScale.domain(yBrushExtent);
-
-        // Update yScale domain if the minimum is greater than the maximum
-        if (yBrushExtent[0] > yBrushExtent[1]) {
-            yScale.domain([yBrushExtent[1], yBrushExtent[0]]);
-        } else {
-            yScale.domain(yBrushExtent);
-        }
+        // Update the y-axis scale domain
+        yScale.domain(newDomain);
 
         // Update y-axis with meaningful ticks
         updateYAxis();
 
         // Update the lines and circles based on the new yScale
         updateLinesAndCircles();
+    }
+    function zoomOutOnChart() {
+        // Calculate the new y-axis domain to zoom in by 50%
+        var newDomain = yScale.domain().map(value => value * 1.5);
 
-        // Reset the brush to its initial position
-        svg.select(".brush").call(yBrush.move, null);
+        // Update the y-axis scale domain
+        yScale.domain(newDomain);
 
-        // Hide reset button
-        d3.select("#resetButton").style("display", "inline-block");
+        // Update y-axis with meaningful ticks
+        updateYAxis();
+
+        // Update the lines and circles based on the new yScale
+        updateLinesAndCircles();
+    }
+    function panUpOnChart() {
+        // Get the current y-axis domain
+        var currentDomain = yScale.domain();
+
+        // Calculate the new domain by shifting it upwards by a certain percentage
+        var deltaY = (currentDomain[1] - currentDomain[0]) * 0.1; // Adjust the percentage as needed
+        var newDomain = [currentDomain[0] + deltaY, currentDomain[1] + deltaY];
+
+        // Update the y-axis scale domain
+        yScale.domain(newDomain);
+
+        // Update y-axis with meaningful ticks
+        updateYAxis();
+
+        // Update the lines and circles based on the new yScale
+        updateLinesAndCircles();
     }
 
-    // Handle touch events
-    svg.on("touchstart", yBrushed)
-        .on("touchmove", yBrushed)
-        .on("touchend", yBrushed);
+    function panDownOnChart() {
+        // Get the current y-axis domain
+        var currentDomain = yScale.domain();
+
+        // Calculate the new domain by shifting it downwards by a certain percentage
+        var deltaY = (currentDomain[1] - currentDomain[0]) * 0.1; // Adjust the percentage as needed
+        var newDomain = [currentDomain[0] - deltaY, currentDomain[1] - deltaY];
+
+        // Update the y-axis scale domain
+        yScale.domain(newDomain);
+
+        // Update y-axis with meaningful ticks
+        updateYAxis();
+
+        // Update the lines and circles based on the new yScale
+        updateLinesAndCircles();
+    }
+    // // Handle touch events
+    // svg.on("touchstart", yBrushed)
+    //     .on("touchmove", yBrushed)
+    //     .on("touchend", yBrushed);
 
 
 
@@ -352,12 +300,8 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
     }
 
 
-
-
     updateChart(10 * 360);
     updateYAxis();
-    toggleBrushing();
-
 
     function updateChart(max_time_lag) {
 
@@ -696,6 +640,7 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
     }
 }
 
+
 function getCountryFlagEmoji(countryCode) {
     const flagMappings = {
         'AFG': '🇦🇫', 'ALA': '🇦🇽', 'ALB': '🇦🇱', 'DZA': '🇩🇿', 'ASM': '🇦🇸',
@@ -745,9 +690,4 @@ function getCountryFlagEmoji(countryCode) {
     }
     return flagMappings[countryCode] || countryCode;
 }
-
-
-
-
-
 
