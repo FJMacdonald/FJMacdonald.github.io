@@ -378,36 +378,23 @@ svg = d3.select("#development_chart")
 
             const nameParts = resultsArray[index].athleteName.split(" ")
             // Extract the first name
-            const firstName = nameParts[0];
+            var firstName = (index + 1) + '. ' + nameParts[0];
+            var lastName = nameParts.pop() + resultsArray[index].country + resultsArray[index].status;
 
             // Append the athlete name and country on two lines
-            const placeSpan = listItem.append('span')
-                .style('display', 'inline-block') // Ensure the text is displayed inline
-                .style('vertical-align', 'top') // Align the text to the top of the rectangle
-                .attr("class", "label")
-                .text((index + 1) + '. '); // Display the athlete's place
-
-            // Get the width of the place span
-            const placeWidth = placeSpan.node().getBoundingClientRect().width;
-
-            // Append the first name
-            const firstSpan = listItem.append('span')
-                .style('display', 'inline-block') // Ensure the text is displayed inline
-                .style('vertical-align', 'top') // Align the text to the top of the rectangle
-                .attr("class", "label")
-                .text(firstName);
-
-            // Get the width of the first name span
-            const firstNameWidth = firstSpan.node().getBoundingClientRect().width;
+            upperPart = listItem.append('span')
+                .style('display', 'inline-block') 
+                .style('vertical-align', 'top') 
+                .style('margin-left', '2px') 
+                .text(firstName); 
 
             listItem.append('span')
-                .style('display', 'block') // Ensure the text is displayed as a block
-                .style('margin-top', '-20px') // Adjust the margin-top to align vertically below the first name
-                .style('margin-left', 25 + 'px') // Adjust margin-left based on the width of the first name.attr("class", "label")
-                .style('float', 'left') // Right-align the text
-                .style('text-align', 'left') // Align the text to the right
-                .attr("class", "label")
-                .text(nameParts.pop() + resultsArray[index].country + resultsArray[index].status);
+                .style('display', 'block')
+                .style('margin-top', '-15px') 
+                .style('margin-left', '27px') 
+                .style('float', 'inherit') 
+                .style('vertical-align', 'bottom')
+                .text(lastName);
         }
 
         function renderLegendPage(pageIndex) {
@@ -419,8 +406,8 @@ svg = d3.select("#development_chart")
             var legendPage = d3.create('li');
             for (var i = startIndex; i < endIndex; i++) {
                 (function (index) {
-                    var listItem = legendPage.append('div')
-                        .classed('legend-item', true);
+                    var listItem = legendPage.append('div');
+                        //.classed('legend-item', true);
                     addListItem(listItem, index);
                 })(i);
             }

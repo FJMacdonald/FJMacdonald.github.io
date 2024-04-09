@@ -95,26 +95,26 @@ By following these steps, you can create a free website that allows users to upl
  
          // List of filenames (replace with your filenames)
          const filenames = [
-         "Results for Elite Women - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
-            "Results for Elite Men - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
-            "Results for Elite Women - 2024 Americas Triathlon Championships Miami.csv",
-            "Results for Elite Men - 2024 Americas Triathlon Championships Miami.csv",
-            "Results for Junior Women - 2024 Americas Triathlon Championships Miami.csv",
-            "Results for Junior Men - 2024 Americas Triathlon Championships Miami.csv",
-            "Results for Junior Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-            "Results for Junior Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-            "Results for Elite Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-            "Results for Elite Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-            "Results for Junior Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
-            "Results for Junior Men - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
-            "Results for Elite Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
-            "Results for Elite Men - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
-            "Results for Elite Women - 2024 T100 Triathlon World Tour at CLASH Endurance Miami",
-            "Results for Elite Men - 2024 T100 Triathlon World Tour at CLASH Endurance Miami",
-            "Results for Elite Women - 2024 Americas Triathlon Cup Barbados",
-            "Results for Elite Men - 2024 Americas Triathlon Cup Barbados",
-            "Results for Elite Women - 2024 World Triathlon Cup Hong Kong",
-            "Results for Elite Men - 2024 World Triathlon Cup Hong Kong",
+             "Results for Elite Women - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
+             "Results for Elite Men - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
+             "Results for Elite Women - 2024 Americas Triathlon Championships Miami.csv",
+             "Results for Elite Men - 2024 Americas Triathlon Championships Miami.csv",
+             "Results for Junior Women - 2024 Americas Triathlon Championships Miami.csv",
+             "Results for Junior Men - 2024 Americas Triathlon Championships Miami.csv",
+             "Results for Junior Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
+             "Results for Junior Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
+             "Results for Elite Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
+             "Results for Elite Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
+             "Results for Junior Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
+             "Results for Junior Men - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
+             "Results for Elite Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
+             "Results for Elite Men - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
+             "Results for Elite Women - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
+             "Results for Elite Men - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
+             "Results for Elite Women - 2024 Americas Triathlon Cup Barbados.csv",
+             "Results for Elite Men - 2024 Americas Triathlon Cup Barbados.csv",
+             "Results for Elite Women - 2024 World Triathlon Cup Hong Kong.csv",
+             "Results for Elite Men - 2024 World Triathlon Cup Hong Kong.csv",
          ];
  
          // Group filenames by year
@@ -231,6 +231,7 @@ By following these steps, you can create a free website that allows users to upl
                          .then(data => {
                              // Process the data here
                              // Call the function to handle file upload
+                             console.log(filename, fileURL)
                              handleFileUpload(data);
                          })
                          .catch(error => console.error("Error fetching file:", error));
@@ -266,6 +267,7 @@ By following these steps, you can create a free website that allows users to upl
              if (event.target) {
                  const file = event.target.files[0]; // Get the uploaded file
                  titlename = file.filename;
+                 console.log(titlename);
                  const reader = new FileReader(); // Create a new FileReader object
                  reader.onload = function (e) {
                      const csvData = e.target.result; // Get the CSV data
