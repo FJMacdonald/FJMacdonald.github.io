@@ -103,8 +103,8 @@ By following these steps, you can create a free website that allows users to upl
              "Results for Junior Men - 2024 Americas Triathlon Championships Miami.csv",
              "Results for Junior Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
              "Results for Junior Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-             "Results for Elite Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-             "Results for Elite Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
+             "Results for Elite Women - 2023 Americas Triathlon Cup Sarasota.csv",
+             "Results for Elite Men - 2023 Americas Triathlon Cup Sarasota.csv",
              "Results for Junior Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
              "Results for Junior Men - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
              "Results for Elite Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
@@ -189,7 +189,8 @@ By following these steps, you can create a free website that allows users to upl
          function createRaceButtons(races) {
              fileButtonsDiv.innerHTML = ""; // Clear previous buttons
              const backButton = document.createElement("button");
-             backButton.textContent = "Back";
+             backButton.textContent = '\u25C0';
+ 
              backButton.addEventListener("click", () => {
                  currentYear = null;
                  createYearButtons();
@@ -211,7 +212,7 @@ By following these steps, you can create a free website that allows users to upl
          function createFilenameButtons(filenames, race) {
              fileButtonsDiv.innerHTML = ""; // Clear previous buttons
              const backButton = document.createElement("button");
-             backButton.textContent = "Back";
+             backButton.textContent = '\u25C0';
              backButton.addEventListener("click", () => {
                  currentRace = null;
                  createRaceButtons(years[currentYear]);
