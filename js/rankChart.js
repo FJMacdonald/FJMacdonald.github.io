@@ -1,9 +1,20 @@
 function drawRankChart(athletesData, colorPalette) {
     console.log(athletesData);
     // Define chart dimensions
-    const margin = { top: 20, right: 30, bottom: 20, left: 10 };
+    const margin = { top: 20, right: 10, bottom: 20, left: 10 };
     const width = window.innerWidth - margin.left - margin.right;
-    const height = 14 * athletesData.length;
+    // Get the computed font size of the body element
+    const bodyFontSize = parseFloat(window.getComputedStyle(document.body).fontSize);
+    // Calculate the width of the longest athlete name
+    const longestName = athletesData.reduce((max, { athleteName }) => athleteName.length > max ? athleteName.length : max, 0);
+    const longestNameWidth = longestName * (bodyFontSize / 2) - margin.right +1; // Assuming an average character width of half the font size
+    console.log("longestNameWidth", longestNameWidth);
+    const longestNameWidthFraction = longestNameWidth/6;
+
+    // Use the body font size for calculating the height
+    const height = (bodyFontSize+1) * athletesData.length;
+
+   // const height = 12 * athletesData.length;
 
     d3.select("#rank_chart").selectAll('*').remove();
     var svg_rank = d3.select("#rank_chart")
@@ -14,7 +25,7 @@ function drawRankChart(athletesData, colorPalette) {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
     // Create a rectangle for the frame
-    var frame = svg_rank.append("rect")
+    const frame = svg_rank.append("rect")
         .attr("x", 0)
         .attr("y", 0)
         .attr("width", width)
@@ -34,14 +45,15 @@ function drawRankChart(athletesData, colorPalette) {
     const yScale = d3.scaleLinear()
         .domain([1, athletesData.length]) // Rank starts from 1
         .range([margin.top, height - margin.bottom]);
+
     const sectionEnds = [
         xScale(0.2),
-        xScale(1),
-        xScale(1.2),
-        xScale(4),
-        xScale(4.2),
-        xScale(5.2),
-        xScale(5.65),
+        xScale(1)-longestNameWidthFraction,
+        xScale(1.2)-longestNameWidthFraction,
+        xScale(4)-longestNameWidthFraction,
+        xScale(4.2)-longestNameWidthFraction,
+        xScale(5.2)-longestNameWidthFraction,
+        xScale(5.6)-longestNameWidthFraction,
     ];
     // Draw lines connecting swim, bike, run, and finish positions for each athlete
     const athleteLines = svg_rank.selectAll('.athlete-line')

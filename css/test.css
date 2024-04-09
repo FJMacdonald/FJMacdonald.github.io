@@ -24,36 +24,43 @@ h4, h5, h6 {
 body {
     /* background-color: rgb(221, 233, 238); */
     font-family: 'Arial'; 
-    font-size: 2.8vw;
+    /* font-size: 2.0vw; */
+    margin: 20;
 }
 
 /* Media query for smaller screens */
 @media (max-width: 768px) {
   body {
-      font-size: 12px; /* Decrease font size for smaller screens */
+      font-size: 10px; /* Decrease font size for smaller screens */
+  }
+  .button {
+    font-size: 10px; /* Decrease font size for smaller screens */
   }
 }
 
 /* Media query for larger screens */
 @media (min-width: 1200px) {
   body {
-      font-size: 16px; /* Increase font size for larger screens */
+      font-size: 15px; /* Increase font size for larger screens */
+  }
+  .button {
+    font-size: 10px; /* Decrease font size for smaller screens */
   }
 }
 
 .button {
     display: inline-block;
-    padding: 10px 20px;
+    padding: 5px 5px;
     border: none;
     border-radius: 5px;
-    background-color: #3891d9; /* Green */
+    background-color: #b2cfe8; /* Green */
     color: white;
     text-align: center;
     text-decoration: none;
-    font-size: 14px;
+    font-size: 12px; 
     cursor: pointer;
     transition: background-color 0.3s;
-    margin: 5px;
+    margin: 2px 2px 5px 2px;
   }
   
   .button:hover {

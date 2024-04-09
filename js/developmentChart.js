@@ -1,36 +1,33 @@
-// const errorResult = 99999;
-var brushingEnabled = true;
 
 
-//rectangles in the legend (athletes + teams)
-///nRects = athletesArray.length
 const clientWidth = window.innerWidth;
 const clientHeight = window.innerHeight;
 
 // Define the size and spacing of the rectangles
 const size = 25;
-const bottom = 10;
 var lineOpacity = "0.5";
 var lineStroke = "1.0";
 
-var circleRadius = 3;
-const circleRadiusHover = 6;
+var circleRadius = 2;
+const circleRadiusHover = 4;
 
-// set the dimensions and margins of the graph
-var margin = { top: 40, right: 10, bottom: bottom, left: clientWidth / 14 },
-    width = clientWidth - margin.left - margin.right,
-    height = 0.5 * clientHeight;
+
+// Draws the chart
+function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) {
+
+//set the dimensions and margins of the graph
+const margin = { top: 20, right: 10, bottom: 5, left: 10 };
+const padding = { top: 20, right: 30, bottom: 10, left: 50 };
+const width = window.innerWidth - margin.left - margin.right,
+      height = 0.5 * clientHeight;
+
 // append the svg object to the body of the page
 svg = d3.select("#development_chart")
     .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
     .append("g")
-    .attr("transform",
-        "translate(" + margin.left + "," + margin.top + ")");
-
-// Draws the chart
-function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) {
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 
     let chartTitleDiv = document.getElementById("devchart_title");
@@ -91,50 +88,48 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
     var athleteIndexArray = [];
 
     // Create a rectangle for the frame
-    var frame = svg.append("rect")
+    const frame = svg.append("rect")
         .attr("x", 0)
         .attr("y", 0)
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.top + margin.bottom)
+        .attr("width", width)
+        .attr("height", height)
         .attr("rx", 10)
         .attr("ry", 10)
         .attr("stroke", "gray")
         .attr("opacity", 0.6)
         .attr("stroke-width", 2)
         .attr("fill", "transparent")
-        .attr("transform",
-            "translate(-" + margin.left + ",-" + margin.top + ")");
+        
 
 
     var xScale = d3.scaleLinear()
         .domain([0, raceLength]) //assuming a 90min race
-        .range([0, width]); //leaving space for ledgend
+        .range([padding.left, width]); //leaving space for ledgend
 
 
     // Define the initial yScale
     const yScale = d3.scaleLinear()
         .domain([-max_time_lag, 0])
-        .range([height, 0]);
+        .range([height, 1.5*margin.top]);
 
     // Define the initial yAxis
     const yAxis = d3.axisLeft(yScale).ticks(0);
 
-    // Add x-axis
-    var xAxis = d3.axisTop(xScale).ticks(0);
-    svg.append("g")
-        .attr("class", "x axis")
-        .call(xAxis);
+    const yAxisTransform = `translate(${xScale(0)}, ${0})`;
+    const fontSize = Math.min(width, height) * 0.03; 
 
     // Add y-axis
     svg.append("g")
         .attr("class", "y axis label")
         .call(yAxis)
+        .attr("transform", yAxisTransform)
         .append('text')
-        .attr("y", -clientWidth / 20)
-        .attr("x", -10)
+        .attr("y",  -35)
+        .attr("x", -40)
+        .attr("transform", yAxisTransform)
         .attr("transform", "rotate(-90)")
         .attr("fill", "#000")
-        // .attr("font-size", "16")
+        .style("font-size", fontSize + "px")
         .text("Time Behind Leader");
 
 
@@ -263,6 +258,7 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
 
         // Define the y-axis with the calculated number of ticks and custom tick format
         const yAxis = d3.axisLeft(yScale).ticks(numberOfTicks).tickFormat(d => {
+            console.log("adjusting y");
             if (d < -90) {
                 const mins = -Math.floor(d / 60);
                 const secs = -d % 60
@@ -274,6 +270,7 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
 
         // Update the y-axis
         yAxisGroup = svg.select(".y.axis").call(yAxis);
+     //   .attr("transform", yAxisTransform);
 
         // Modify the font style for the tick labels
         yAxisGroup.selectAll(".tick text")
@@ -286,16 +283,16 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
             .enter()
             .append("line")
             .attr("class", "y-gridline")
-            .attr("x1", 0)
-            .attr("x2", width)
+            .attr("x1", xScale(0))
+            .attr("x2", xScale(65))
             .attr("y1", d => yScale(d))
             .attr("y2", d => yScale(d))
             .style("stroke", "#ddd")  // Adjust the color as needed
             .style("stroke-dasharray", "3,3");  // Add dashes for a dashed appearance
 
         // Update the y-axis label dynamically
-        const yDomain = yScale.domain();
-        const isSeconds = yDomain[0] >= 0 && yDomain[1] <= 90; // Assuming 90 seconds threshold, adjust as needed
+        // const yDomain = yScale.domain();
+        // const isSeconds = yDomain[0] >= 0 && yDomain[1] <= 90; // Assuming 90 seconds threshold, adjust as needed
 
     }
 
@@ -305,31 +302,6 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
 
     function updateChart(max_time_lag) {
 
-        function estimateColumnWidth() {
-            // Initialize variable to store the longest name
-            var longestName = "Schummelfelder 🇬🇧";
-
-            // Get the computed style of an element with class 'label'
-            var labelElement = document.querySelector('.label');
-            var computedStyle = window.getComputedStyle(labelElement);
-
-            // Extract the font size from the computed style
-            var fontSize = computedStyle.getPropertyValue('font-size');
-
-            // Create a temporary span element to measure the width of the name
-            var span = document.createElement('span');
-            span.textContent = longestName;
-            span.style.fontSize = fontSize;//        s'2.0vw'; 
-            console.log("fontsize", fontSize, span.style.fontSize);
-            span.style.visibility = 'hidden';
-            document.body.appendChild(span);
-            // Get the width of the span element
-            var width = span.offsetWidth;
-            console.log("width", width);
-            // Remove the temporary span element
-            document.body.removeChild(span);
-            return width;
-        }
 
         function addListItem(listItem, index) {
             // Append the clickable rectangle
@@ -610,7 +582,7 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
                 .attr("class", "gridline")
                 .append("line")
                 .attr('x1', xScale(x))
-                .attr('y1', -10)
+                .attr('y1', 10)
                 .attr('x2', xScale(x))
                 .attr('y2', yScale(-height - 250))
                 .style('stroke', 'gray')
@@ -621,21 +593,21 @@ function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) 
 
 
         //function to annotate chrt 
-        function annotateChart(selection, x, y, text) {
+        function annotateXAxis(selection, x, text) {
             selection
                 .append('text')
                 .attr("class", "label")
                 .attr('x', xScale(x))
-                .attr('y', y)
+                .attr('y', 20)
                 .text(text);
         }
 
         // annotate with swim, t1, bike, t2, run
-        annotateChart(svg, 4, -10, 'Swim');
-        annotateChart(svg, 10.5, -10, 'T1');
-        annotateChart(svg, 24, -10, 'Bike');
-        annotateChart(svg, 42.5, -10, 'T2');
-        annotateChart(svg, 52, -10, 'Run');
+        annotateXAxis(svg, 3, 'Swim');
+        annotateXAxis(svg, 10, 'T1');
+        annotateXAxis(svg, 24, 'Bike');
+        annotateXAxis(svg, 42, 'T2');
+        annotateXAxis(svg, 52, 'Run');
 
     }
 }
