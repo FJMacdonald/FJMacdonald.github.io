@@ -118,18 +118,20 @@ svg = d3.select("#development_chart")
     const yAxisTransform = `translate(${xScale(0)}, ${0})`;
     const fontSize = Math.min(width, height) * 0.03; 
 
-    // Add y-axis
+    // // Add y-axis
     svg.append("g")
         .attr("class", "y axis label")
         .call(yAxis)
-        .attr("transform", yAxisTransform)
-        .append('text')
-        .attr("y",  -35)
-        .attr("x", -40)
-        .attr("transform", yAxisTransform)
+        .attr("transform", yAxisTransform);
+
+
+    // Add y-axis title
+    svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("fill", "#000")
-        .style("font-size", fontSize + "px")
+        .attr("y", 0 + margin.left / 4 - 3)
+        .attr("x", 0 - height / 2)
+        .attr("dy", "1em")
+        .style("text-anchor", "middle")
         .text("Time Behind Leader");
 
 
@@ -195,16 +197,9 @@ svg = d3.select("#development_chart")
         // Update the lines and circles based on the new yScale
         updateLinesAndCircles();
     }
-    // // Handle touch events
-    // svg.on("touchstart", yBrushed)
-    //     .on("touchmove", yBrushed)
-    //     .on("touchend", yBrushed);
-
-
 
 
     function updateLinesAndCircles() {
-
         // Update lines
         svg.selectAll(".line")
             .attr("d", function (d) { // Generate path 'd' attribute based on coordinates
@@ -238,22 +233,9 @@ svg = d3.select("#development_chart")
         // Calculate the difference between the max and min values
         const yRangeDiff = yRange[1] - yRange[0];
 
-        // Determine the number of ticks based on the yRangeDiff
-        let numberOfTicks;
+        // set number of ticks
+        const numberOfTicks = 6;
 
-        if (yRangeDiff <= 60) {
-            // If the range is less than or equal to 60 seconds, show ticks every 10 seconds
-            numberOfTicks = yRangeDiff / 10;
-        } else if (yRangeDiff <= 600) {
-            // If the range is less than or equal to 600 seconds (10 minutes), show ticks every minute
-            numberOfTicks = yRangeDiff / 60;
-        } else if (yRangeDiff >= 1800) {
-            // If the range is greater than (30 minutes), show ticks every 5 minutes
-            numberOfTicks = Math.floor(yRangeDiff / 300);
-        } else {
-            // Otherwise, show ticks every 2 minutes
-            numberOfTicks = yRangeDiff / 120;
-        }
 
 
         // Define the y-axis with the calculated number of ticks and custom tick format
@@ -289,10 +271,6 @@ svg = d3.select("#development_chart")
             .attr("y2", d => yScale(d))
             .style("stroke", "#ddd")  // Adjust the color as needed
             .style("stroke-dasharray", "3,3");  // Add dashes for a dashed appearance
-
-        // Update the y-axis label dynamically
-        // const yDomain = yScale.domain();
-        // const isSeconds = yDomain[0] >= 0 && yDomain[1] <= 90; // Assuming 90 seconds threshold, adjust as needed
 
     }
 
