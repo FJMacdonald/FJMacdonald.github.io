@@ -292,6 +292,7 @@
 
             var rankArray = [];
             var nonFinishers = 0;
+            var dns = 0;
             //number who did not start
             const nDNS = athletesArray.filter(athlete => athlete.status == "DNS").length;
             const nfinishers = athletesArray.filter(athlete => athlete.status == "").length;
@@ -309,8 +310,8 @@
                 var finishRank = parseInt(athlete.position);
                 if (athlete.status != "") {
                         if (athlete.status === "DNS") { //push to end
-                        //    nonFinishers++;
-                            finishRank = athletesArray.length - nDNS + 1;
+                            dns++;
+                            finishRank = athletesArray.length - nDNS + dns;
                         } else {
                             nonFinishers++;
                             finishRank = nfinishers + nonFinishers;
