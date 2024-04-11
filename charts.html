@@ -30,11 +30,11 @@
     <!-- Create a div where the graph will take place -->
     <div id="chart_title"></div>
     <button id="issueButton" class="button" style="display: none;" onclick="showPopup()">Data Problems</button>
-    <div id="rank_chart" style="width: 100%;"></div>
-    <div id="devchart_title" style="width: 100%;"></div>
-    <div id="development_chart"></div>
-    <div id="devChartButtons" style="width: 100%; display:inline-flex; justify-content: center;">
-    <button id="zoomInButton" class = "button">Zoom in</button>
+    <div id="rank_chart" style="max-width: 100%"></div>
+    <div id="devchart_title"></div>
+    <div id="development_chart" style="max-width: 100%"></div>
+    <div id="devChartButtons" style="justify-content: center;">
+        <button id="zoomInButton" class = "button">Zoom in</button>
         <button id="zoomOutButton" class = "button">Zoom out</button>
         <button id="resetButton" class = "button">Reset zoom</button>
         <button id="panUpButton" class = "button">Pan up</button>
@@ -46,7 +46,7 @@
         </ul>
     </div>
     <div id="spiderchart_title"></div>
-    <div id="spider_chart" style="width: 100%;"></div>
+    <div id="spider_chart" style="max-width: 100%"></div>
 
 
     <script src="https://d3js.org/d3-color.v1.min.js"> </script>
@@ -292,7 +292,8 @@
 
             var rankArray = [];
             var nonFinishers = 0;
-            //  const nNonfinishers = athletesArray.filter(athlete => athlete.status != "").length;
+            //number who did not start
+            const nDNS = athletesArray.filter(athlete => athlete.status == "DNS").length;
             const nfinishers = athletesArray.filter(athlete => athlete.status == "").length;
             athletesArray.forEach((athlete) => {
                 // Find athlete rank for swim
@@ -307,9 +308,15 @@
                 const runRank = athlete.run === 0 ? athletesArray.length + 1 : sortedByRun.findIndex((sortedAthlete) => sortedAthlete === athlete) + 1;
                 var finishRank = parseInt(athlete.position);
                 if (athlete.status != "") {
-                    nonFinishers++;
-                    finishRank = nfinishers + nonFinishers;
+                        if (athlete.status === "DNS") { //push to end
+                        //    nonFinishers++;
+                            finishRank = athletesArray.length - nDNS + 1;
+                        } else {
+                            nonFinishers++;
+                            finishRank = nfinishers + nonFinishers;
+                        }
                 }
+                
 
                 rankArray.push({
                     athleteName: athlete.athleteName,

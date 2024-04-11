@@ -1,14 +1,15 @@
 function drawRankChart(athletesData, colorPalette) {
     console.log(athletesData);
     // Define chart dimensions
-    const margin = { top: 20, right: 10, bottom: 20, left: 10 };
+    const margin = { top: 40, right: 20, bottom: 20, left: 5 };
+  //  const margin = { top: 40, right: 5, bottom: 20, left: 5 };
     const width = window.innerWidth - margin.left - margin.right;
     // Get the computed font size of the body element
     const bodyFontSize = parseFloat(window.getComputedStyle(document.body).fontSize);
     // Calculate the width of the longest athlete name
     const longestName = athletesData.reduce((max, { athleteName }) => athleteName.length > max ? athleteName.length : max, 0);
-    const longestNameWidth = longestName * (bodyFontSize / 2) - margin.right +1; // Assuming an average character width of half the font size
-    console.log("longestNameWidth", longestNameWidth);
+    const longestNameWidth = (longestName * bodyFontSize)/2.5; // Assuming an average character width of half the font size
+  //  console.log("longestNameWidth", longestNameWidth);
     const longestNameWidthFraction = longestNameWidth/6;
 
     // Use the body font size for calculating the height
@@ -47,13 +48,13 @@ function drawRankChart(athletesData, colorPalette) {
         .range([margin.top, height - margin.bottom]);
 
     const sectionEnds = [
-        xScale(0.2),
-        xScale(1)-longestNameWidthFraction,
-        xScale(1.2)-longestNameWidthFraction,
-        xScale(4)-longestNameWidthFraction,
-        xScale(4.2)-longestNameWidthFraction,
-        xScale(5.2)-longestNameWidthFraction,
-        xScale(5.6)-longestNameWidthFraction,
+        xScale(0.2), //start
+        xScale(0.8),//swim
+        xScale(1.1),//t1
+        xScale(3.7),//bike
+        xScale(4.0),//t2
+        xScale(5.2),//run
+        xScale(7)-longestNameWidth,//finish
     ];
     // Draw lines connecting swim, bike, run, and finish positions for each athlete
     const athleteLines = svg_rank.selectAll('.athlete-line')
@@ -115,19 +116,38 @@ function drawRankChart(athletesData, colorPalette) {
     // Calculate section labels
     const sectionLabels = ['Swim', 'T1', 'Bike', 'T2', 'Run', 'Finish'];
 
-    // Add section labels
-    svg_rank.selectAll('.section-label')
-        .data(sectionLabels)
-        .enter()
-        .append('text')
-        .attr('class', 'label section-label')
-        .attr('x', (d, i) => {
-            return (sectionEnds[i] + sectionEnds[i + 1]) / 2; // Midpoint between section ends
-        })
-        .attr('y', height - margin.bottom + 15) // Adjust for label position below the x-axis
-        .attr('text-anchor', 'middle')
-        .text(d => d)
-        .attr('fill', 'black');
+    const yPositions = [height - margin.bottom + 15, 4*margin.top/5];
+
+    yPositions.forEach(yPos => {
+        // Create a new 'g' element for each yPos
+        const yPosGroup = svg_rank.append('g')
+            .attr('transform', `translate(0, ${yPos})`);
+
+        // Bind data to the 'g' element
+        const labels = yPosGroup.selectAll('.section-label')
+            .data(sectionLabels);
+
+        // Append new text elements only for the enter selection
+        labels.enter()
+            .append('text')
+            .attr('class', 'label section-label')
+            .attr('x', (d, i) => {
+                if (i == 0) {
+                    return (sectionEnds[i + 1]) / 2;
+                }
+                return (sectionEnds[i] + sectionEnds[i + 1]) / 2; // Midpoint between section ends
+            })
+            .attr('text-anchor', 'middle')
+            .text(d => d)
+            .attr('fill', 'grey');
+    });
+
+    // Add place "title"
+    svg_rank.append("text")
+        .attr("x", 7) // add 20 the 'center' title above athlete names
+        .attr("y", margin.top / 2)//width / 2)
+        .attr("text-decoration", "underline")
+        .text("Place");
 
     // Add swim ranks on the left
     svg_rank.selectAll('.swim-rank-label')
@@ -135,12 +155,20 @@ function drawRankChart(athletesData, colorPalette) {
         .enter()
         .append('text')
         .attr('class', 'label-small swim-rank-label')
-        .attr('x', margin.left - 5)
+        .attr('x', 9)
         .attr('y', d => yScale(d.swim_rank))
         .attr('dy', '0.35em')
         .text(d => d.swim_rank)
+        .attr('text-anchor', 'middle')
         .attr('fill', 'black')
     // .style('font-size', '12px');
+
+    // Add Athelete "title"
+    svg_rank.append("text")
+        .attr("x", sectionEnds[6] + 20) // add 20 the 'center' title above athlete names
+        .attr("y", margin.top / 2)//width / 2)
+        .attr("text-decoration", "underline")
+        .text("Athlete");
 
     // Add athlete names at the finish position
     svg_rank.selectAll('.athlete-label')

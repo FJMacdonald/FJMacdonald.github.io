@@ -25,7 +25,8 @@ body {
     /* background-color: rgb(221, 233, 238); */
     font-family: 'Arial'; 
     /* font-size: 2.0vw; */
-    margin: 20;
+    /* margin: 20; */
+
 }
 
 /* Media query for smaller screens */
@@ -47,6 +48,21 @@ body {
     font-size: 10px; /* Decrease font size for smaller screens */
   }
 }
+/* body, html {
+  margin: 0;
+  padding: 0;
+ 
+  display: flex;
+  justify-content: center;
+  align-items: center;
+} */
+
+/* svg {
+  border: 1px solid black; 
+}
+svg_rank {
+  border: 1px solid black;
+} */
 
 .button {
     display: inline-block;

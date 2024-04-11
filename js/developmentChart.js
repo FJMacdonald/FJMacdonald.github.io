@@ -16,7 +16,7 @@ const circleRadiusHover = 4;
 function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) {
 
 //set the dimensions and margins of the graph
-const margin = { top: 20, right: 10, bottom: 5, left: 10 };
+const margin = { top: 20, right: 25, bottom: 5, left: 5 };
 const padding = { top: 20, right: 30, bottom: 10, left: 50 };
 const width = window.innerWidth - margin.left - margin.right,
       height = 0.5 * clientHeight;
@@ -128,7 +128,7 @@ svg = d3.select("#development_chart")
     // Add y-axis title
     svg.append("text")
         .attr("transform", "rotate(-90)")
-        .attr("y", 0 + margin.left / 4 - 3)
+        .attr("y", 0 + margin.left)
         .attr("x", 0 - height / 2)
         .attr("dy", "1em")
         .style("text-anchor", "middle")
