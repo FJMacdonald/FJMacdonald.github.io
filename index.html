@@ -142,6 +142,7 @@ By following these steps, you can create a free website that allows users to upl
              }
              years[year][race].push(filename);
          });
+         
  
          // Create buttons for each year
          const fileButtonsDiv = document.getElementById("fileButtons");
@@ -183,10 +184,14 @@ By following these steps, you can create a free website that allows users to upl
  
          let currentYear = null;
          let currentRace = null;
+         console.log('years', years);
+         
+         //reverse the years
+         const yearKeys = Object.keys(years).reverse();
  
          function createYearButtons() {
              fileButtonsDiv.innerHTML = ""; // Clear previous buttons
-             Object.keys(years).forEach(year => {
+             yearKeys.forEach(year => {
                  const yearButton = document.createElement("button");
                  yearButton.textContent = year;
                  yearButton.addEventListener("click", () => {
@@ -494,6 +499,9 @@ By following these steps, you can create a free website that allows users to upl
  
                  for (let i = 0; i < problemIndexArray.length; i++) {
                      if (athletesArray[problemIndexArray[i]].status == "") {
+                         if (i == 0) {
+                             problemString += "<p> Problems with the lead athlete will affect all results in the develpment chart as it is based on the difference between each athlete and the lead athlete.";
+                         }
                          problemString += "<li>" + athletesArray[problemIndexArray[i]].athleteName + "</li>";
                          athletesArray[problemIndexArray[i]].athleteName += "***";
                      }
