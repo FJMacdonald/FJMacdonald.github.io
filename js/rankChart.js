@@ -1,5 +1,5 @@
 function drawRankChart(athletesData, colorPalette) {
-    console.log(athletesData);
+    console.log('rankArray', athletesData);
     // Define chart dimensions
     const margin = { top: 40, right: 20, bottom: 20, left: 5 };
   //  const margin = { top: 40, right: 5, bottom: 20, left: 5 };

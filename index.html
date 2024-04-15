@@ -95,27 +95,39 @@ By following these steps, you can create a free website that allows users to upl
  
          // List of filenames (replace with your filenames)
          const filenames = [
-             "Results for Elite Women - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
-             "Results for Elite Men - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
+             // 2024
+             //14th April
+             "Results for Elite Women - 2024 Americas Triathlon Cup Salinas.csv",
+             "Results for Elite Men - 2024 Americas Triathlon Cup Salinas.csv",
+             "Results for NCAA - 2024 Texas Draft Legal Festival.csv",
+             //24 March
+             "Results for Elite Women - 2024 World Triathlon Cup Hong Kong.csv",
+             "Results for Elite Men - 2024 World Triathlon Cup Hong Kong.csv",
+             // 17th March
+             "Results for Elite Women - 2024 Americas Triathlon Cup Barbados.csv",
+             "Results for Elite Men - 2024 Americas Triathlon Cup Barbados.csv",
+             // 9th March
              "Results for Elite Women - 2024 Americas Triathlon Championships Miami.csv",
              "Results for Elite Men - 2024 Americas Triathlon Championships Miami.csv",
              "Results for Junior Women - 2024 Americas Triathlon Championships Miami.csv",
              "Results for Junior Men - 2024 Americas Triathlon Championships Miami.csv",
-             "Results for Junior Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-             "Results for Junior Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
-             "Results for Elite Women - 2023 Americas Triathlon Cup Sarasota.csv",
-             "Results for Elite Men - 2023 Americas Triathlon Cup Sarasota.csv",
+             "Results for Elite Women - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
+             "Results for Elite Men - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
+ 
+             //2023
+             //july
              "Results for Junior Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
              "Results for Junior Men - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
              "Results for Elite Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
              "Results for Elite Men - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
-             "Results for Elite Women - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
-             "Results for Elite Men - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
-             "Results for Elite Women - 2024 Americas Triathlon Cup Barbados.csv",
-             "Results for Elite Men - 2024 Americas Triathlon Cup Barbados.csv",
-             "Results for Elite Women - 2024 World Triathlon Cup Hong Kong.csv",
-             "Results for Elite Men - 2024 World Triathlon Cup Hong Kong.csv",
-         ];
+             //april
+             "Results for Elite Women - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
+             "Results for Elite Men - 2023 Americas Triathlon Cup St. Peters Missouri.csv",
+             //march
+             "Results for Junior Women - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
+             "Results for Junior Men - 2023 Americas Triathlon North American Junior Championships Sarasota.csv",
+             "Results for Elite Women - 2023 Americas Triathlon Cup Sarasota.csv",
+             "Results for Elite Men - 2023 Americas Triathlon Cup Sarasota.csv",        ];
  
          // Group filenames by year
          const years = {};
@@ -232,7 +244,6 @@ By following these steps, you can create a free website that allows users to upl
                          .then(data => {
                              // Process the data here
                              // Call the function to handle file upload
-                             console.log(filename, fileURL)
                              handleFileUpload(data);
                          })
                          .catch(error => console.error("Error fetching file:", error));
@@ -244,17 +255,9 @@ By following these steps, you can create a free website that allows users to upl
  
          // Initial setup
          createYearButtons();
- 
- 
-         
+    
          const athletesArray = [];
          var athleteIndexArray = [];
- 
- 
- 
- 
-         
- 
  
          // Function to handle file upload
          function handleFileUpload(event) {
@@ -272,6 +275,7 @@ By following these steps, you can create a free website that allows users to upl
                  const reader = new FileReader(); // Create a new FileReader object
                  reader.onload = function (e) {
                      const csvData = e.target.result; // Get the CSV data
+                     //console.log(csvData)
                      processData(csvData, athletesArray);
                  };
                  // Read the uploaded file as text
@@ -290,11 +294,47 @@ By following these steps, you can create a free website that allows users to upl
  
          // Function converts time String formated as hr:min:sec to an int of seconds
          function convertToSeconds(timeString) {
+             if (timeString.length != 8) {
+                 timeString = formatDuration(timeString);
+             }
              // Split the time string into hours, minutes, and seconds
              const [hours, minutes, seconds] = timeString.split(':').map(Number);
              // Convert hours, minutes, and seconds to seconds
              const totalSeconds = hours * 3600 + minutes * 60 + seconds;
              return totalSeconds;
+         }
+         function formatDuration(duration) {
+             // Split the duration into hours, minutes, and seconds
+             const parts = duration.split(':');
+             
+             // Initialize variables for hours, minutes, and seconds
+             let hours, minutes, seconds;
+ 
+             // Determine the values of hours, minutes, and seconds based on the number of parts
+             if (parts.length === 1) {
+                 hours = 0;
+                 minutes = 0;
+                 seconds = parseInt(parts[0]);
+             } else if (parts.length === 2) {
+                 hours = 0;
+                 minutes = parseInt(parts[0]);
+                 seconds = parseInt(parts[1]);
+             } else if (parts.length === 3) {
+                 hours = parseInt(parts[0]);
+                 minutes = parseInt(parts[1]);
+                 seconds = parseInt(parts[2]);
+             } else {
+                 // Invalid duration format
+                 return 'Invalid duration format';
+             }
+ 
+             // Format the hours, minutes, and seconds with leading zeros
+             const formattedHours = hours.toString().padStart(2, '0');
+             const formattedMinutes = minutes.toString().padStart(2, '0');
+             const formattedSeconds = seconds.toString().padStart(2, '0');
+ 
+             // Return the formatted duration
+             return `${formattedHours}:${formattedMinutes}:${formattedSeconds}`;
          }
  
          // Function to process csv data into arrays used by drawChart
@@ -306,14 +346,16 @@ By following these steps, you can create a free website that allows users to upl
              const results = [];
              //process csv file into a results array
              for (let i = 1; i < lines.length; i++) {
-                 const obj = {};
-                 const currentline = lines[i].split(',');
-                 headers.forEach((header, index) => {
-                     obj[header] = currentline[index];
-                 });
-                 results.push(obj);
+                 if (lines != ""){
+                     
+                     const obj = {};
+                     const currentline = lines[i].split(',');
+                     headers.forEach((header, index) => {
+                         obj[header] = currentline[index];
+                     });
+                     results.push(obj);
+                 }
              }
- 
  
              // Convert time strings to seconds and store each stage of the race
              var leadSwim = 0;
@@ -334,7 +376,6 @@ By following these steps, you can create a free website that allows users to upl
              for (let i = 0; i < results.length; i++) {
                  var name = results[i]["Athlete First Name"] + " " + results[i]["Athlete Last Name"];
                  var finalTime = results[i][headers[headers.length - 1]].replace(/\r$/, '');
- 
                  var swim = convertToSeconds(results[i]["Swim"]);
                  if (swim != 0) {
                      if (swim < fastestSplits[0]) {
@@ -425,7 +466,6 @@ By following these steps, you can create a free website that allows users to upl
                  // Extract the first name
                  const firstName = nameParts.shift();
                  const lastName = nameParts.pop()
- 
                  athletesArray.push({
                      athleteName: firstName + " " + lastName,
                      swim: swim,
@@ -466,6 +506,8 @@ By following these steps, you can create a free website that allows users to upl
                  }
                 
              }
+ 
+ 
              // Storing data in local storage
              localStorage.setItem("athletesArray", JSON.stringify(athletesArray));
              localStorage.setItem("leadersArray", JSON.stringify(leadersArray));
@@ -474,6 +516,25 @@ By following these steps, you can create a free website that allows users to upl
              const fileTitle = titlename.replace(/Results for |.csv/g, ""); // Extract title from filename
              localStorage.setItem("fileTitle", fileTitle);
  
+ /* For some reason the data stopped being stored.  It looked as if everything was working but
+    when the data was loaded it charts.html it was null.  Couldn't make any sense of it, so I closed 
+    the browser window, reopended a fresh one and everything worked fine again.
+ 
+             console.log('athletes array', athletesArray);
+             // Retrieve data from localStorage
+             const storedData = localStorage.getItem("athletesArray");
+ 
+             // Convert the retrieved data back to an array
+             const retrievedArray = JSON.parse(storedData);
+ 
+             // Check if the retrieved array matches the original array
+             if (JSON.stringify(retrievedArray) === JSON.stringify(athletesArray)) {
+                 console.log("Data successfully stored in localStorage.");
+             } else {
+                 console.log("Data retrieval from localStorage failed.");
+             }
+ */            
+ 
              // Redirect with parameters as query parameters
              window.location.href = "charts.html";
  
@@ -481,15 +542,6 @@ By following these steps, you can create a free website that allows users to upl
  
  
  
- 
- 
- 
- 
- 
- 
- 
- 
-    
          function normalizeResults(fastestSplits, slowestSplits, spiderChartArray) {
              for (let i = 0; i < athletesArray.length; i++) {
                  var normalizedSwim = 1 - (athletesArray[i].timePerDisipline[0] - fastestSplits[0]) / (slowestSplits[0] - fastestSplits[0]);

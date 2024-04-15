@@ -14,7 +14,7 @@ const circleRadiusHover = 4;
 
 // Draws the chart
 function drawChart(athletesArray, max_time_lag, spiderChartArray, colorPalette) {
-
+console.log('athletesArray',athletesArray);
 //set the dimensions and margins of the graph
 const margin = { top: 20, right: 25, bottom: 5, left: 5 };
 const padding = { top: 20, right: 30, bottom: 10, left: 50 };
@@ -240,7 +240,6 @@ svg = d3.select("#development_chart")
 
         // Define the y-axis with the calculated number of ticks and custom tick format
         const yAxis = d3.axisLeft(yScale).ticks(numberOfTicks).tickFormat(d => {
-            console.log("adjusting y");
             if (d < -90) {
                 const mins = -Math.floor(d / 60);
                 const secs = -d % 60
@@ -357,7 +356,7 @@ svg = d3.select("#development_chart")
             const nameParts = resultsArray[index].athleteName.split(" ")
             // Extract the first name
             var firstName = (index + 1) + '. ' + nameParts[0];
-            var lastName = nameParts.pop() + resultsArray[index].country + resultsArray[index].status;
+            var lastName = nameParts.pop() + " " + resultsArray[index].country + " " + resultsArray[index].status;
 
             // Append the athlete name and country on two lines
             upperPart = listItem.append('span')
@@ -449,6 +448,14 @@ svg = d3.select("#development_chart")
                     .text(i.athleteName)
                     .attr("x", mouseX)
                     .attr("y", mouseY);
+
+                // Filter for the corresponding athlete path circles & update them with new state
+                const athleteCircles = svg.selectAll(".athlete-circle").filter(d => d.athleteIndex === i);
+                athleteCircles.each(function (d) {
+                    d3.select(this)
+                        .style("opacity", lineOpacity)
+                        .attr("r", circleRadius);
+                });
             })
             .on("mouseout", function (d, i) {
                 const athleteLine = d3.select(this);
