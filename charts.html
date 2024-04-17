@@ -11,9 +11,8 @@
 <body>
 
 
-    <label for="back_to_files">Return to race selection:</label>
-    <!-- Back button -->
-    <button id="back_to_files" class="button back-button" onclick="returnToMain()">&#9664;</button>
+    <!-- <label for="back_to_files">Return to race selection:</label>
+    <button id="back_to_files" class="button back-button" onclick="returnToMain()">&#9664;</button> -->
 
 
     <!-- HTML markup for the popup -->
@@ -23,9 +22,6 @@
         <button id="close-popup" class="popup-close" onclick="closeIssuePopup()">Close</button>  
     </div>
 
-    <!-- Create some seperation -->
-    <br>
-    <hr>
 
     <!-- Create a div where the graph will take place -->
     <div id="chart_title"></div>
@@ -58,9 +54,9 @@
     <script src="/js/rankChart.js"></script>
     <script>
         const errorResult = 99999;
-        function returnToMain() {
-            window.location.href = "index.html";
-        }
+        // function returnToMain() {
+        //     window.location.href = "index.html";
+        // }
 
         // Access the data passed as parameters
         const athletesArray = JSON.parse(localStorage.getItem("athletesArray"));
