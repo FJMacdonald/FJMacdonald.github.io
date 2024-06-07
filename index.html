@@ -54,12 +54,17 @@ By following these steps, you can create a free website that allows users to upl
  
  
  
+ 
+     <div>
+         <footer>
+             <div id="hitCounter" style="font-size: 6px"></div>
+         </footer>
+     </div>
      <script src="https://d3js.org/d3-color.v1.min.js"> </script>
      <script src="https://d3js.org/d3-interpolate.v1.min.js"> </script>
      <script src="https://d3js.org/d3-scale-chromatic.v1.min.js"> </script>
      <script src="https://d3js.org/d3.v7.min.js"></script>
      <script src="/js/developmentChart.js"></script>
-     <script src="/js/resultsConverter.js"></script>
      <script>
  
      document.addEventListener('DOMContentLoaded', function() {
@@ -90,30 +95,31 @@ By following these steps, you can create a free website that allows users to upl
  
          // List of filenames (replace with your filenames)
          const filenames = [
-              // 2024
-              //2nd june
-             "Results for Elite Women - 2024 Europe Triathlon Cup Rzeszów.csv",
-             "Results for Semifinal 1 Elite Women - 2024 Europe Triathlon Cup Kielce.csv",
-             "Results for Semifinal 2 Elite Women - 2024 Europe Triathlon Cup Kielce.csv",
-             // 26 May
-             "Results for Elite Women - 2024 Asia Triathlon Cup Osaka.csv",
-             //25 MAy
-             "Results for Elite Women - 2024 Europe Triathlon Cup Olsztyn.csv",
-             "Results for Junior Women - 2024 Europe Triathlon Junior Cup Olsztyn.csv",
-             //18/19 May
-             "Results for Elite Women - 2024 World Triathlon Cup Huatulco.csv",
-             "Results for Elite Men - 2024 World Triathlon Cup Huatulco.csv",
-             //11 May
-             "Results for Elite Women - 2024 Europe Triathlon Cup Caorle.csv",
-              //14th April
-              "Results for Elite Women - 2024 Americas Triathlon Cup Salinas.csv",
-              "Results for Elite Men - 2024 Americas Triathlon Cup Salinas.csv",
-             
-             "Results for NCAA - 2024 Texas Draft Legal Festival.csv",
-             "Results for Youth Elite Women - 2024 Texas Draft Legal Festival.csv",
-             "Results for Youth Elite Men - 2024 Texas Draft Legal Festival.csv",
-             "Results for Junior Elite Women - 2024 Texas Draft Legal Festival.csv",
-             "Results for Junior Elite Men - 2024 Texas Draft Legal Festival.csv",
+             // 2024
+            //2nd june
+            "Results for Elite Women - 2024 Europe Triathlon Cup Rzeszów.csv",
+            "Results for Final Women - 2024 Europe Triathlon Cup Kielce.csv",
+            "Results for Semifinal 1 Elite Women - 2024 Europe Triathlon Cup Kielce.csv",
+            "Results for Semifinal 2 Elite Women - 2024 Europe Triathlon Cup Kielce.csv",
+            // 26 May
+            "Results for Elite Women - 2024 Asia Triathlon Cup Osaka.csv",
+            //25 MAy
+            "Results for Elite Women - 2024 Europe Triathlon Cup Olsztyn.csv",
+            "Results for Junior Women - 2024 Europe Triathlon Junior Cup Olsztyn.csv",
+            //18/19 May
+            "Results for Elite Women - 2024 World Triathlon Cup Huatulco.csv",
+            "Results for Elite Men - 2024 World Triathlon Cup Huatulco.csv",
+            //11 May
+            "Results for Elite Women - 2024 Europe Triathlon Cup Caorle.csv",
+             //14th April
+             "Results for Elite Women - 2024 Americas Triathlon Cup Salinas.csv",
+             "Results for Elite Men - 2024 Americas Triathlon Cup Salinas.csv",
+                         
+            "Results for NCAA - 2024 Texas Draft Legal Festival.csv",
+            "Results for Youth Elite Women - 2024 Texas Draft Legal Festival.csv",
+            "Results for Youth Elite Men - 2024 Texas Draft Legal Festival.csv",
+            "Results for Junior Elite Women - 2024 Texas Draft Legal Festival.csv",
+            "Results for Junior Elite Men - 2024 Texas Draft Legal Festival.csv",
              //24 March
              "Results for Elite Women - 2024 World Triathlon Cup Hong Kong.csv",
              "Results for Elite Men - 2024 World Triathlon Cup Hong Kong.csv",
@@ -127,8 +133,7 @@ By following these steps, you can create a free website that allows users to upl
              "Results for Junior Men - 2024 Americas Triathlon Championships Miami.csv",
              "Results for Elite Women - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
              "Results for Elite Men - 2024 T100 Triathlon World Tour at CLASH Endurance Miami.csv",
-             // 11 May
-             "Results for Elite Women - 2024 Europe Triathlon Cup Caorle.csv",
+ 
              //2023
              //july
              "Results for Junior Women - 2023 World Triathlon Sprint & Relay Championships Hamburg.csv",
@@ -314,6 +319,7 @@ By following these steps, you can create a free website that allows users to upl
  
          // Function converts time String formated as hr:min:sec to an int of seconds
          function convertToSeconds(timeString) {
+            console.log(timeString)
              if (timeString.length != 8) {
                  timeString = formatDuration(timeString);
              }
@@ -376,7 +382,7 @@ By following these steps, you can create a free website that allows users to upl
                      results.push(obj);
                  }
              }
-             console.log('results', results);
+             console.log(results);
              // Convert time strings to seconds and store each stage of the race
              var leadSwim = 0;
              var leadT1 = 0;
@@ -385,6 +391,7 @@ By following these steps, you can create a free website that allows users to upl
              var leadRun = 0;
              var problemTimes = 0;
              var problemIndexArray = [];
+             console.log(results[0]);
              const swim1 = convertToSeconds(results[0]["Swim"]);
              const t11 = convertToSeconds(results[0]["T1"]);
              const bike1 = convertToSeconds(results[0]["Bike"]);
@@ -607,12 +614,30 @@ By following these steps, you can create a free website that allows users to upl
                  });
              }
          }
+ 
+ 
+ 
+ 
+ 
   
              // Function to retrieve the current hit count from localStorage
              function getHitCount() {
                  return localStorage.getItem('hitCount') || '0';
              }
  
+             // Function to update the hit count and display it on the page
+             function updateHitCount() {
+                 var hitCount = parseInt(getHitCount()) + 1;
+                 localStorage.setItem('hitCount', hitCount);
+                 console.log(hitCount);
+                 const counter = document.getElementById("hitCounter");
+                 counter.innerHTML = hitCount;
+                 counter.style = "font-size: 8px";
+                 counter.style.color = "#F5F5F5";
+             }
+ 
+             // Call the updateHitCount function to increment the hit count
+             updateHitCount();
          });
  
      </script>
