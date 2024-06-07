@@ -97,7 +97,7 @@ By following these steps, you can create a free website that allows users to upl
          const filenames = [
              // 2024
             //2nd june
-            "Results for Elite Women - 2024 Europe Triathlon Cup Rzeszów.csv",
+            "Results for Elite Women - 2024 Europe Triathlon Cup Rzeszow.csv",
             "Results for Final Women - 2024 Europe Triathlon Cup Kielce.csv",
             "Results for Semifinal 1 Elite Women - 2024 Europe Triathlon Cup Kielce.csv",
             "Results for Semifinal 2 Elite Women - 2024 Europe Triathlon Cup Kielce.csv",
@@ -319,7 +319,6 @@ By following these steps, you can create a free website that allows users to upl
  
          // Function converts time String formated as hr:min:sec to an int of seconds
          function convertToSeconds(timeString) {
-            console.log(timeString)
              if (timeString.length != 8) {
                  timeString = formatDuration(timeString);
              }
@@ -382,7 +381,7 @@ By following these steps, you can create a free website that allows users to upl
                      results.push(obj);
                  }
              }
-             console.log(results);
+ 
              // Convert time strings to seconds and store each stage of the race
              var leadSwim = 0;
              var leadT1 = 0;
@@ -391,7 +390,6 @@ By following these steps, you can create a free website that allows users to upl
              var leadRun = 0;
              var problemTimes = 0;
              var problemIndexArray = [];
-             console.log(results[0]);
              const swim1 = convertToSeconds(results[0]["Swim"]);
              const t11 = convertToSeconds(results[0]["T1"]);
              const bike1 = convertToSeconds(results[0]["Bike"]);
