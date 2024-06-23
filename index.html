@@ -579,11 +579,11 @@ By following these steps, you can create a free website that allows users to upl
  
          function normalizeResults(fastestSplits, slowestSplits, spiderChartArray) {
              for (let i = 0; i < athletesArray.length; i++) {
-                 var normalizedSwim = 1 - (athletesArray[i].timePerDisipline[0] - fastestSplits[0]) / (slowestSplits[0] - fastestSplits[0]);
-                 var normalizedT1 = 1 - (athletesArray[i].timePerDisipline[1] - fastestSplits[1]) / (slowestSplits[1] - fastestSplits[1]);
-                 var normalizedBike = 1 - (athletesArray[i].timePerDisipline[2] - fastestSplits[2]) / (slowestSplits[2] - fastestSplits[2]);
-                 var normalizedT2 = 1 - (athletesArray[i].timePerDisipline[3] - fastestSplits[3]) / (slowestSplits[3] - fastestSplits[3]);
-                 var normalizedRun = 1 - (athletesArray[i].timePerDisipline[4] - fastestSplits[4]) / (slowestSplits[4] - fastestSplits[4]);
+                 var normalizedSwim = (slowestSplits[0] - athletesArray[i].timePerDisipline[0]) / (slowestSplits[0] - fastestSplits[0]);
+                 var normalizedT1 = (slowestSplits[1] - athletesArray[i].timePerDisipline[1]) / (slowestSplits[1] - fastestSplits[1]);
+                 var normalizedBike = (slowestSplits[2] - athletesArray[i].timePerDisipline[2]) / (slowestSplits[2] - fastestSplits[2]);
+                 var normalizedT2 = (slowestSplits[3] - athletesArray[i].timePerDisipline[3]) / (slowestSplits[3] - fastestSplits[3]);
+                 var normalizedRun = (slowestSplits[4] - athletesArray[i].timePerDisipline[4]) / (slowestSplits[4] - fastestSplits[4]);
                  //using > 2 in case a normalized value ends up as 1.00002
                  if (normalizedSwim > 2){
                      console.log(athletesArray[i].athleteName, "swim", athletesArray[i].timePerDisipline[0]);
